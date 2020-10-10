@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Timers;
 using System.Media;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,22 +8,12 @@ namespace KCK_Projekt
 {
     class Program
     {
-        static int indexMainMenu = 0;
+        static int indexMainMenu = 0;  
         static int tabulator = 100;
-        public static System.Timers.Timer timer = new System.Timers.Timer();
-        static int ontick = 1;
-
-
+        
         public static void Main()
         {
-            Console.Clear();
-
-            //Muzyka
-            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(@"\ProjektKCK1\ProjektKCK\pacmanmusic.wav");
-            sp.PlayLooping();
-            sp.Play();
-
-
+           // Console.Clear();
             List<string> menuItems = new List<string>()
             {
                 "New Game",
@@ -34,16 +23,15 @@ namespace KCK_Projekt
                 "Exit"
             };
 
+            //Muzyka
+            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(@"\ProjektKCK1\ProjektKCK\pacmanmusic.wav");
+            //sp.PlayLooping();
+            //sp.Play();
+
+
+          
+
             Console.CursorVisible = false;
-
-
-            //timer.Interval = 250;
-            //timer.Elapsed += printtitle;
-            //timer.AutoReset = true;
-            //timer.Start();
-            //timer.Stop();
-
-            //printtitle();
 
 
             while (true)
@@ -56,10 +44,9 @@ namespace KCK_Projekt
                     Console.Clear();
                     //Console.WriteLine("New Game chosen");
                     //zakoncz();
-                    Map map = new Map();
-                    map.showmap();
-                    Pacman pacman = new Pacman();
-                    pacman.Printpacman();
+                    Game game = Game.GetGame();
+                    game.GetMap().PrintMap();
+                    game.GetPacman().PrintPacman();
                     Console.Clear();
 
                 }
@@ -80,15 +67,122 @@ namespace KCK_Projekt
                     Environment.Exit(0);
                 }
             }
+        }//main end
+        
+
+        public static void printtitle()
+        {
+           
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.SetCursorPosition(0, 0);
+            Console.Write("_/_/_/_/_/  _/      _/  _/_/_/    _/_/_/_/");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("     _/      _/    _/_/    _/      _/   ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write("   _/        _/  _/    _/    _/  _/       ");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("    _/_/  _/_/  _/    _/  _/_/    _/    ");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.Write("  _/          _/      _/_/_/    _/_/_/    ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("   _/  _/  _/  _/_/_/_/  _/  _/  _/     ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write(" _/          _/      _/        _/         ");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("  _/      _/  _/    _/  _/    _/_/     ");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.Write("_/          _/      _/        _/_/_/_/    ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine(" _/      _/  _/    _/  _/      _/     ");
+            Console.ResetColor();
         }
+
+
+        public static void zakoncz()
+        {
+            Console.Clear();
+            while (true)
+            {
+                ConsoleKeyInfo ckey = Console.ReadKey();
+                if (ckey.Key == ConsoleKey.DownArrow)
+                {
+                    Console.WriteLine("Gra");
+                }
+                else if (ckey.Key == ConsoleKey.UpArrow)
+                {
+                    Console.WriteLine("Gra");
+                }
+                else if (ckey.Key == ConsoleKey.LeftArrow)
+                {
+                    Console.WriteLine("Gra");
+                }
+                else if (ckey.Key == ConsoleKey.RightArrow)
+                {
+                    Console.WriteLine("Gra");
+                }
+                else if (ckey.Key == ConsoleKey.Escape)
+                {
+                    break;
+                }
+            }
+            Console.Clear();
+        }
+
+
+        public static string drawMainMenu(List<string> items)
+        {
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (i == indexMainMenu)
+                {
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.SetCursorPosition((tabulator + 5) / 2, 10 + i);
+                    Console.WriteLine("<<<" + items[i] + ">>>");
+                }
+                else
+                {
+                    Console.SetCursorPosition((tabulator) / 2, 10 + i);
+                    Console.WriteLine(items[i]);
+                }
+                Console.ResetColor();
+            }
+            ConsoleKeyInfo ckey = Console.ReadKey();
+            if (ckey.Key == ConsoleKey.DownArrow)
+            {
+                if (indexMainMenu == items.Count - 1) { }
+                else { indexMainMenu++; }
+            }
+            else if (ckey.Key == ConsoleKey.UpArrow)
+            {
+                if (indexMainMenu <= 0) { }
+                else { indexMainMenu--; }
+            }
+            else if (ckey.Key == ConsoleKey.LeftArrow)
+            {
+                Console.Clear();
+            }
+            else if (ckey.Key == ConsoleKey.RightArrow)
+            {
+                Console.Clear();
+            }
+            else if (ckey.Key == ConsoleKey.Enter)
+            {
+                return items[indexMainMenu];
+            }
+            else
+            {
+                return "";
+            }
+
+            Console.Clear();
+            return "";
+        }
+
+
         public class Map
         {
-            private string walls;
-            private string points;
-
-            public Map ()
-            {
-                walls = @"
+            private string walls = @"
 ╔═══════════════════╦═══════════════════╗
 ║                   ║                   ║
 ║   ╔═╗   ╔═════╗   ║   ╔═════╗   ╔═╗   ║
@@ -113,7 +207,7 @@ namespace KCK_Projekt
 ║                                       ║
 ╚═══════════════════════════════════════╝
 ".Trim();
-                points = @"                                         
+            private string points = @"                                         
   * * * * * * * * *   * * * * * * * * *  
   *     *         *   *         *     *  
   +     *         *   *         *     +  
@@ -136,8 +230,9 @@ namespace KCK_Projekt
   *               *   *               *  
   * * * * * * * * * * * * * * * * * * *  
                                          ";
-            }
-            public void showmap(bool renderSpace = false)
+
+         
+            public void PrintMap(bool renderSpace = false)
             {
                 Console.Clear();
                 Console.SetCursorPosition(0, 0);
@@ -204,7 +299,7 @@ namespace KCK_Projekt
             {
                 return Y;
             }
-            public void Printpacman()
+            public void PrintPacman()
             {
                 Console.SetCursorPosition(X, Y);
                 Console.Write("O");
@@ -216,148 +311,30 @@ namespace KCK_Projekt
         {
             private Map map;
             private Pacman pacman;
-            public Game()
-            {
-                //map=
+            private static Game game;
+
+            private Game(){
+                map = new Map();
+                pacman = new Pacman();
+            }
+
+            public static Game GetGame(){
+                if(game == null){
+                    game = new Game();
+                    
+                }
+                return game;
+            }
+
+            public Map GetMap(){
+                return map;
+            }
+
+            public Pacman GetPacman(){
+                return pacman;
             }
         }
 
-        public static void printtitle(object source, ElapsedEventArgs e)
-        {
-            if (ontick % 2 == 0)
-               {
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    Console.SetCursorPosition(0, 0);
-                    Console.Write("_/_/_/_/_/  _/      _/  _/_/_/    _/_/_/_/");
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine("     _/      _/    _/_/    _/      _/   ");
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.Write("   _/        _/  _/    _/    _/  _/       ");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("    _/_/  _/_/  _/    _/  _/_/    _/    ");
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    Console.Write("  _/          _/      _/_/_/    _/_/_/    ");
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine("   _/  _/  _/  _/_/_/_/  _/  _/  _/     ");
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.Write(" _/          _/      _/        _/         ");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("  _/      _/  _/    _/  _/    _/_/     ");
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    Console.Write("_/          _/      _/        _/_/_/_/    ");
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine(" _/      _/  _/    _/  _/      _/     ");
-                    Console.ResetColor();
-                    ontick = 1;
-                    //System.Threading.Thread.Sleep(waittime);
-                }
-                else if(ontick % 2 == 1)
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.SetCursorPosition(0, 0);
-                    Console.Write("_/_/_/_/_/  _/      _/  _/_/_/    _/_/_/_/");
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    Console.WriteLine("     _/      _/    _/_/    _/      _/   ");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("   _/        _/  _/    _/    _/  _/       ");
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("    _/_/  _/_/  _/    _/  _/_/    _/    ");
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.Write("  _/          _/      _/_/_/    _/_/_/    ");
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    Console.WriteLine("   _/  _/  _/  _/_/_/_/  _/  _/  _/     ");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write(" _/          _/      _/        _/         ");
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("  _/      _/  _/    _/  _/    _/_/     ");
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.Write("_/          _/      _/        _/_/_/_/    ");
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    Console.WriteLine(" _/      _/  _/    _/  _/      _/     ");
-                    Console.ResetColor();
-                    ontick = 2;
-                    //System.Threading.Thread.Sleep(waittime);
-                }
-            //}
-        }
-
-        public static void zakoncz()
-        {
-            Console.Clear();
-            while (true)
-            {
-                ConsoleKeyInfo ckey = Console.ReadKey();
-                if (ckey.Key == ConsoleKey.DownArrow)
-                {
-                    Console.WriteLine("Gra");
-                }
-                else if (ckey.Key == ConsoleKey.UpArrow)
-                {
-                    Console.WriteLine("Gra");
-                }
-                else if (ckey.Key == ConsoleKey.LeftArrow)
-                {
-                    Console.WriteLine("Gra");
-                }
-                else if (ckey.Key == ConsoleKey.RightArrow)
-                {
-                    Console.WriteLine("Gra");
-                }
-                else if (ckey.Key == ConsoleKey.Escape)
-                {
-                    break;
-                }
-            }
-            Console.Clear();
-        }
-        public static string drawMainMenu(List<string> items)
-        {
-            for (int i = 0; i < items.Count; i++)
-            {
-                if (i == indexMainMenu)
-                {
-                    Console.BackgroundColor = ConsoleColor.Gray;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.SetCursorPosition((tabulator + 5) / 2, 10 + i);
-                    Console.WriteLine("<<<" + items[i] + ">>>");
-                }
-                else
-                {
-                    Console.SetCursorPosition((tabulator) / 2, 10 + i);
-                    Console.WriteLine(items[i]);
-                }
-                Console.ResetColor();
-            }
-            ConsoleKeyInfo ckey = Console.ReadKey();
-            if (ckey.Key == ConsoleKey.DownArrow)
-            {
-                if (indexMainMenu == items.Count - 1) { }
-                else { indexMainMenu++; }
-            }
-            else if (ckey.Key == ConsoleKey.UpArrow)
-            {
-                if (indexMainMenu <= 0) { }
-                else { indexMainMenu--; }
-            }
-            else if (ckey.Key == ConsoleKey.LeftArrow)
-            {
-                Console.Clear();
-            }
-            else if (ckey.Key == ConsoleKey.RightArrow)
-            {
-                Console.Clear();
-            }
-            else if (ckey.Key == ConsoleKey.Enter)
-            {
-                return items[indexMainMenu];
-            }
-            else
-            {
-                return "";
-            }
-
-            Console.Clear();
-            return "";
-        }
+        
     }
 }

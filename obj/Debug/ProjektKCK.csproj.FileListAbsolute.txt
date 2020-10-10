@@ -5,3 +5,10 @@ F:\ProjektKCK1\ProjektKCK\obj\Debug\ProjektKCK.csprojAssemblyReference.cache
 F:\ProjektKCK1\ProjektKCK\obj\Debug\ProjektKCK.csproj.CoreCompileInputs.cache
 F:\ProjektKCK1\ProjektKCK\obj\Debug\ProjektKCK.exe
 F:\ProjektKCK1\ProjektKCK\obj\Debug\ProjektKCK.pdb
+C:\Users\HP\Documents\Visual Studio 2019\ProjektKCK\bin\Debug\ProjektKCK.exe.config
+C:\Users\HP\Documents\Visual Studio 2019\ProjektKCK\bin\Debug\ProjektKCK.exe
+C:\Users\HP\Documents\Visual Studio 2019\ProjektKCK\bin\Debug\ProjektKCK.pdb
+C:\Users\HP\Documents\Visual Studio 2019\ProjektKCK\obj\Debug\ProjektKCK.csprojAssemblyReference.cache
+C:\Users\HP\Documents\Visual Studio 2019\ProjektKCK\obj\Debug\ProjektKCK.csproj.CoreCompileInputs.cache
+C:\Users\HP\Documents\Visual Studio 2019\ProjektKCK\obj\Debug\ProjektKCK.exe
+C:\Users\HP\Documents\Visual Studio 2019\ProjektKCK\obj\Debug\ProjektKCK.pdb
