@@ -1,0 +1,7 @@
+F:\ProjektKCK1\ProjektKCK\bin\Debug\ProjektKCK.exe.config
+F:\ProjektKCK1\ProjektKCK\bin\Debug\ProjektKCK.exe
+F:\ProjektKCK1\ProjektKCK\bin\Debug\ProjektKCK.pdb
+F:\ProjektKCK1\ProjektKCK\obj\Debug\ProjektKCK.csprojAssemblyReference.cache
+F:\ProjektKCK1\ProjektKCK\obj\Debug\ProjektKCK.csproj.CoreCompileInputs.cache
+F:\ProjektKCK1\ProjektKCK\obj\Debug\ProjektKCK.exe
+F:\ProjektKCK1\ProjektKCK\obj\Debug\ProjektKCK.pdb
