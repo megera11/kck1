@@ -10,7 +10,6 @@ namespace KCK_Projekt
     {
         static int indexMainMenu = 0;  
         static int tabulator = 100;
-        
         public static void Main()
         {
            // Console.Clear();
@@ -36,7 +35,7 @@ namespace KCK_Projekt
 
             while (true)
             {
-                //printtitle();
+                printtitle();
                 string selectedMenuItem = drawMainMenu(menuItems);
 
                 if (selectedMenuItem == "New Game")
@@ -72,29 +71,40 @@ namespace KCK_Projekt
 
         public static void printtitle()
         {
-           
+
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.SetCursorPosition(0, 0);
+            Console.SetCursorPosition((tabulator - 50) / 2, 3);
             Console.Write("_/_/_/_/_/  _/      _/  _/_/_/    _/_/_/_/");
             Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.SetCursorPosition(Console.CursorLeft, 3);
             Console.WriteLine("     _/      _/    _/_/    _/      _/   ");
             Console.ForegroundColor = ConsoleColor.Blue;
+            Console.SetCursorPosition((tabulator - 50) / 2, Console.CursorTop);
             Console.Write("   _/        _/  _/    _/    _/  _/       ");
             Console.ForegroundColor = ConsoleColor.Red;
+            Console.SetCursorPosition(Console.CursorLeft ,4);
             Console.WriteLine("    _/_/  _/_/  _/    _/  _/_/    _/    ");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.SetCursorPosition((tabulator - 50) / 2, Console.CursorTop);
             Console.Write("  _/          _/      _/_/_/    _/_/_/    ");
             Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.SetCursorPosition(Console.CursorLeft, 5);
             Console.WriteLine("   _/  _/  _/  _/_/_/_/  _/  _/  _/     ");
             Console.ForegroundColor = ConsoleColor.Blue;
+            Console.SetCursorPosition((tabulator - 50) / 2, Console.CursorTop);
             Console.Write(" _/          _/      _/        _/         ");
             Console.ForegroundColor = ConsoleColor.Red;
+            Console.SetCursorPosition(Console.CursorLeft, 6);
             Console.WriteLine("  _/      _/  _/    _/  _/    _/_/     ");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.SetCursorPosition((tabulator - 50) / 2, Console.CursorTop);
             Console.Write("_/          _/      _/        _/_/_/_/    ");
             Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.SetCursorPosition(Console.CursorLeft, 7);
             Console.WriteLine(" _/      _/  _/    _/  _/      _/     ");
             Console.ResetColor();
+
+
         }
 
 
@@ -133,6 +143,8 @@ namespace KCK_Projekt
         {
             for (int i = 0; i < items.Count; i++)
             {
+                
+
                 if (i == indexMainMenu)
                 {
                     Console.BackgroundColor = ConsoleColor.Gray;
