@@ -27,7 +27,7 @@ namespace KCK_Projekt
             //sp.PlayLooping();
             //sp.Play();
 
-
+            //halo kurwa jebany test
           
 
             Console.CursorVisible = false;
