@@ -39,11 +39,15 @@ namespace KCK_Projekt
             Console.CursorVisible = false;
 
 
+            //halo kurwa jebany test
+          
+
             timer.Interval = 250;
             timer.Elapsed += printtitle;
             timer.AutoReset = true;
             timer.Start();
             //timer.Stop();
+
 
             //printtitle();
 
