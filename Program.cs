@@ -346,7 +346,6 @@ namespace KCK_Projekt
                 return pacman;
             }
         }
-        s
         
     }
 }
