@@ -291,6 +291,7 @@ namespace KCK_Projekt
             public Pacman GetPacman()
             {
                 return pacman;
+
             }
         }
 
