@@ -268,6 +268,7 @@ namespace KCK_Projekt
         {
             enum direction { up = 0, down = 1, left = 2, right = 3 };
             private direction pacdirection;
+            private int cos;
             private int X;
             private int Y;
             public Pacman()
