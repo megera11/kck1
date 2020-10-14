@@ -543,6 +543,7 @@ namespace KCK_Projekt
                 return "";
             }
 
+
             Console.Clear();
             return "";
         }
