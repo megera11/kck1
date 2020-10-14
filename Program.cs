@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Text;
 
 namespace KCK_Projekt
 {
@@ -22,10 +23,9 @@ namespace KCK_Projekt
             Console.Clear();
 
             //Muzyka
-            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation:@"\pacmanmusic.wav");
+            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation:@"pacmanmusic.wav");
             sp.PlayLooping();
             sp.Play();
-
 
             List<string> menuItems = new List<string>()
             {
@@ -38,25 +38,15 @@ namespace KCK_Projekt
 
             Console.CursorVisible = false;
 
-
-            //halo kurwa jebany test
-          
-
             timer.Interval = 250;
             timer.Elapsed += printtitle;
             timer.AutoReset = true;
             timer.Start();
-            //timer.Stop();
-
-
-            //printtitle();
-
 
             while (true)
             {
-                //printtitle();
                 string selectedMenuItem = drawMainMenu(menuItems);
-
+                ConsoleKeyInfo ckey = Console.ReadKey();
                 if (selectedMenuItem == "New Game")
                 {
                     timer.Stop();
@@ -68,6 +58,7 @@ namespace KCK_Projekt
                     Console.Clear();
                     game.GetMap().showmap();
                     game.GetPacman().Printpacman(20,17);
+                    game.Score();
                     while(true)
                     {
                         game.PacmanMove();
@@ -226,6 +217,16 @@ namespace KCK_Projekt
             {
                 return wallsposition;
             }
+            public string GetPoints()
+            {
+                return points;
+            }
+            public void ChangePoint(int X, int Y)
+            {
+                StringBuilder sb = new StringBuilder(points);
+                sb[Y * 43 + X] = ' ';
+                points = sb.ToString();
+            }
             public void showmap(bool renderSpace = false)
             {
                 Console.Clear();
@@ -278,7 +279,6 @@ namespace KCK_Projekt
             // 2 == left
             // 3 == right
             private int direction = 0;
-            private int cos;
             private int X;
             private int Y;
             public Pacman()
@@ -308,7 +308,7 @@ namespace KCK_Projekt
             {
                 this.direction = direction;
             }
-            public void Printpacman()
+            public void Printpacman(int X, int Y)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.SetCursorPosition(X, Y);
@@ -322,9 +322,10 @@ namespace KCK_Projekt
         {
             private int X;
             private int Y;
-            public Ghost()
+            public Ghost(int X, int Y)
             {
-
+                this.X = X;
+                this.Y = Y;
             }
             public int getXPosition()
             {
@@ -347,6 +348,7 @@ namespace KCK_Projekt
             private Pacman pacman;
             private static Game game;
             private string nickname;
+            private int score = 0;
             private Game()
             {
                 map = new Map();
@@ -379,53 +381,67 @@ namespace KCK_Projekt
             {
                 return map.GetWallsPosition()[y * 43 + x];
             }
+            private char PointAt(int X, int Y)
+            {
+                return map.GetPoints()[Y * 43 + X];
+            }
             public bool CanMove(int X, int Y , int direction)
             {
 
-                if ( direction == 0  &&  BoardAt(X,Y -1)== 0 && BoardAt(X -1, Y - 1) == 0 && BoardAt(X + 1, Y - 1) == 0)
+                if (direction == 0 && BoardAt(X, Y - 1) == '0' && BoardAt(X - 1, Y - 1) == '0' && BoardAt(X + 1, Y - 1) == '0')
                 {
                     return true;
                 }
-
-                 if (direction == 1 && BoardAt(X, Y + 1) == 0 && BoardAt(X - 1, Y + 1) == 0 && BoardAt(X + 1, Y + 1) == 0)
+                else if (direction == 1 && BoardAt(X, Y + 1) == '0' && BoardAt(X - 1, Y + 1) == '0' && BoardAt(X + 1, Y + 1) == '0')
                 {
                     return true;
                 }
-
-                if (direction == 2 && BoardAt(X -2 , Y ) == 0)
+                else if (direction == 2 && BoardAt(X - 2, Y) == '0')
                 {
                     return true;
                 }
-
-                if (direction == 3 && BoardAt(X + 2, Y ) == 0)
+                else if (direction == 3 && BoardAt(X + 2, Y) == '0')
                 {
                     return true;
                 }
-
-                return false;
+                else
+                {
+                    this.pacman.Printpacman(pacman.getXPosition(), pacman.getYPosition());
+                    return false;
+                }
             }
-            public void PacmanMove(int X, int Y)
+            public void PacmanMove()
             {
                 while (true)
                 {
                     ConsoleKeyInfo ckey = Console.ReadKey();
                     if (ckey.Key == ConsoleKey.UpArrow && CanMove(pacman.getXPosition(), pacman.getYPosition(), 0))
                     {
-                        pacman.setPosition(X, Y - 1);
-                        //if()
+                        Console.SetCursorPosition(pacman.getXPosition(), pacman.getYPosition());
+                        Console.Write(" ");
                         this.pacman.Printpacman(pacman.getXPosition(), pacman.getYPosition() - 1);
+                        game.Score();
                     }
                     else if (ckey.Key == ConsoleKey.DownArrow && CanMove(pacman.getXPosition(), pacman.getYPosition(), 1))
                     {
+                        Console.SetCursorPosition(pacman.getXPosition(), pacman.getYPosition());
+                        Console.Write(" ");
                         this.pacman.Printpacman(pacman.getXPosition(), pacman.getYPosition() + 1);
+                        game.Score();
                     }
                     else if (ckey.Key == ConsoleKey.LeftArrow && CanMove(pacman.getXPosition(), pacman.getYPosition(), 2))
                     {
+                        Console.SetCursorPosition(pacman.getXPosition(), pacman.getYPosition());
+                        Console.Write(" ");
                         this.pacman.Printpacman(pacman.getXPosition() - 1, pacman.getYPosition());
+                        game.Score();
                     }
                     else if (ckey.Key == ConsoleKey.RightArrow  && CanMove(pacman.getXPosition(), pacman.getYPosition(), 3))
                     {
+                        Console.SetCursorPosition(pacman.getXPosition(), pacman.getYPosition());
+                        Console.Write(" ");
                         this.pacman.Printpacman(pacman.getXPosition() + 1, pacman.getYPosition());
+                        game.Score();
                     }
                     else
                     {
@@ -435,7 +451,20 @@ namespace KCK_Projekt
             }
             public void Score()
             {
-                int score = 0;
+                StreamReader sr = new StreamReader("scores.txt");
+                
+                if (PointAt(pacman.getXPosition(), pacman.getYPosition()) == '*')
+                {
+                    score++;
+                    map.ChangePoint(pacman.getXPosition(), pacman.getYPosition());
+                }
+                else if(PointAt(pacman.getXPosition(), pacman.getYPosition()) == '+')
+                {
+                    score += 3;
+                    map.ChangePoint(pacman.getXPosition(), pacman.getYPosition());
+                }
+                Console.SetCursorPosition(44, 1);
+                Console.Write("Score: " + score);
             }
         }
 
@@ -542,11 +571,8 @@ namespace KCK_Projekt
             {
                 return "";
             }
-
-
             Console.Clear();
             return "";
         }
-
     }
 }
