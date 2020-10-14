@@ -64,7 +64,7 @@ namespace KCK_Projekt
                     Game game = Game.GetGame();
                     Console.Write("Your nickname (can not be blank): ");
                     string nickname = Console.ReadLine();
-                    Console.WriteLine(game.CanMove(0, 0));
+                    //Console.WriteLine(game.CanMove(0, 0));
                     Console.Clear();
                     game.GetMap().showmap();
                     game.GetPacman().Printpacman(20,17);
@@ -273,8 +273,11 @@ namespace KCK_Projekt
 
         public class Pacman
         {
-            enum direction { up = 0, down = 1, left = 2, right = 3 };
-            private direction pacdirection;
+            // 0 == up
+            // 1 == down 
+            // 2 == left
+            // 3 == right
+            private int direction = 0;
             private int cos;
             private int X;
             private int Y;
@@ -296,11 +299,16 @@ namespace KCK_Projekt
             {
                 return Y;
             }
-            /*public direction getDirection()
+            public int getDirection()
             {
-                return pacdirection;
-            }*/
-            public void Printpacman(int X, int Y)
+                return direction;
+            }
+
+            public void setDirection(int direction )
+            {
+                this.direction = direction;
+            }
+            public void Printpacman()
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.SetCursorPosition(X, Y);
@@ -371,38 +379,51 @@ namespace KCK_Projekt
             {
                 return map.GetWallsPosition()[y * 43 + x];
             }
-            public bool CanMove(int X, int Y)
+            public bool CanMove(int X, int Y , int direction)
             {
 
-                string wallspoints = map.GetWallsPosition();
-                if (map.GetWallsPosition()[Y * 43 + X] == 0)
+                if ( direction == 0  &&  BoardAt(X,Y -1)== 0 && BoardAt(X -1, Y - 1) == 0 && BoardAt(X + 1, Y - 1) == 0)
                 {
                     return true;
                 }
-                else
+
+                 if (direction == 1 && BoardAt(X, Y + 1) == 0 && BoardAt(X - 1, Y + 1) == 0 && BoardAt(X + 1, Y + 1) == 0)
                 {
-                    return false;
+                    return true;
                 }
+
+                if (direction == 2 && BoardAt(X -2 , Y ) == 0)
+                {
+                    return true;
+                }
+
+                if (direction == 3 && BoardAt(X + 2, Y ) == 0)
+                {
+                    return true;
+                }
+
+                return false;
             }
-            public void PacmanMove()
+            public void PacmanMove(int X, int Y)
             {
                 while (true)
                 {
                     ConsoleKeyInfo ckey = Console.ReadKey();
-                    if (ckey.Key == ConsoleKey.UpArrow)
+                    if (ckey.Key == ConsoleKey.UpArrow && CanMove(pacman.getXPosition(), pacman.getYPosition(), 0))
                     {
+                        pacman.setPosition(X, Y - 1);
                         //if()
                         this.pacman.Printpacman(pacman.getXPosition(), pacman.getYPosition() - 1);
                     }
-                    else if (ckey.Key == ConsoleKey.DownArrow)
+                    else if (ckey.Key == ConsoleKey.DownArrow && CanMove(pacman.getXPosition(), pacman.getYPosition(), 1))
                     {
                         this.pacman.Printpacman(pacman.getXPosition(), pacman.getYPosition() + 1);
                     }
-                    else if (ckey.Key == ConsoleKey.LeftArrow)
+                    else if (ckey.Key == ConsoleKey.LeftArrow && CanMove(pacman.getXPosition(), pacman.getYPosition(), 2))
                     {
                         this.pacman.Printpacman(pacman.getXPosition() - 1, pacman.getYPosition());
                     }
-                    else if (ckey.Key == ConsoleKey.RightArrow)
+                    else if (ckey.Key == ConsoleKey.RightArrow  && CanMove(pacman.getXPosition(), pacman.getYPosition(), 3))
                     {
                         this.pacman.Printpacman(pacman.getXPosition() + 1, pacman.getYPosition());
                     }
