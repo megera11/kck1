@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace KCK_Projekt
 {
@@ -21,7 +22,7 @@ namespace KCK_Projekt
             Console.Clear();
 
             //Muzyka
-            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(@"\ProjektKCK1\ProjektKCK\pacmanmusic.wav");
+            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation:@"\pacmanmusic.wav");
             sp.PlayLooping();
             sp.Play();
 
@@ -229,6 +230,7 @@ namespace KCK_Projekt
             {
                 Console.Clear();
                 Console.SetCursorPosition(0, 0);
+                Console.ForegroundColor = ConsoleColor.Blue;
                 int x = Console.CursorLeft;
                 int y = Console.CursorTop;
                 foreach (char c in walls)
@@ -246,6 +248,7 @@ namespace KCK_Projekt
                         Console.SetCursorPosition(Console.CursorLeft + 1, Console.CursorTop);
                     }
                 }
+                Console.ResetColor();
                 Console.SetCursorPosition(0, 0);
                 x = Console.CursorLeft;
                 y = Console.CursorTop;
@@ -299,9 +302,11 @@ namespace KCK_Projekt
             }*/
             public void Printpacman(int X, int Y)
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.SetCursorPosition(X, Y);
                 setPosition(X, Y);
                 Console.Write("O");
+                Console.ResetColor();
                 //Console.ReadKey();
             }
         }
@@ -520,5 +525,6 @@ namespace KCK_Projekt
             Console.Clear();
             return "";
         }
+
     }
 }
