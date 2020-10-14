@@ -5,6 +5,7 @@ using System.Media;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace KCK_Projekt
 {
@@ -14,8 +15,6 @@ namespace KCK_Projekt
         static int tabulator = 100;
         public static System.Timers.Timer timer = new System.Timers.Timer();
         static int ontick = 1;
-        static int score = 0;
-        static string nickname = null;
 
         public static void Main()
         {
@@ -61,10 +60,13 @@ namespace KCK_Projekt
                 {
                     timer.Stop();
                     Console.Clear();
-                    Map map = new Map();
-                    map.showmap();
-                    Pacman pacman = new Pacman();
-                    pacman.Printpacman();
+                    Game game = Game.GetGame();
+                    Console.Write("Your nickname (can not be blank): ");
+                    string nickname = Console.ReadLine();
+                    Console.WriteLine(game.CanMove(0, 0));
+                    Console.Clear();
+                    game.GetMap().showmap();
+                    game.GetPacman().Printpacman();
                     Console.Clear();
                     timer.Start();
 
@@ -138,31 +140,31 @@ namespace KCK_Projekt
         {
             private string walls;
             private string points;
-
+            private string wallsposition;
             public Map()
             {
                 walls = @"
 ╔═══════════════════╦═══════════════════╗
 ║                   ║                   ║
 ║   ╔═╗   ╔═════╗   ║   ╔═════╗   ╔═╗   ║
-║   ╚═╝   ╚═════╝   ║   ╚═════╝   ╚═╝   ║
+║   ╚═╝   ╚═════╝   ╩   ╚═════╝   ╚═╝   ║
 ║                                       ║
-║   ═══   ║   ══════╦══════   ║   ═══   ║
+║   ═══   ╦   ══════╦══════   ╦   ═══   ║
 ║         ║         ║         ║         ║
-╚═════╗   ╠══════   ║   ══════╣   ╔═════╝
+╚═════╗   ╠══════   ╩   ══════╣   ╔═════╝
       ║   ║                   ║   ║      
-══════╝   ║   ╔════   ════╗   ║   ╚══════
+══════╝   ╩   ╔════   ════╗   ╩   ╚══════
               ║           ║             
-══════╗   ║   ║           ║   ║   ╔══════
+══════╗   ╦   ║           ║   ╦   ╔══════
       ║   ║   ╚═══════════╝   ║   ║      
       ║   ║                   ║   ║      
-╔═════╝   ║   ══════╦══════   ║   ╚═════╗
+╔═════╝   ╩   ══════╦══════   ╩   ╚═════╗
 ║                   ║                   ║
-║   ══╗   ═══════   ║   ═══════   ╔══   ║
+║   ══╗   ═══════   ╩   ═══════   ╔══   ║
 ║     ║                           ║     ║
-╠══   ║   ║   ══════╦══════   ║   ║   ══╣
+╠══   ╩   ╦   ══════╦══════   ╦   ╩   ══╣
 ║         ║         ║         ║         ║
-║   ══════╩══════   ║   ══════╩══════   ║
+║   ══════╩══════   ╩   ══════╩══════   ║
 ║                                       ║
 ╚═══════════════════════════════════════╝
 ".Trim();
@@ -189,6 +191,35 @@ namespace KCK_Projekt
   *               *   *               *  
   * * * * * * * * * * * * * * * * * * *  
                                          ";
+                wallsposition = @"
+11111111111111111111111111111111111111111
+10000000000000000000100000000000000000001
+10001110001111111000100011111110001110001
+10001110001111111000100011111110001110001
+10000000000000000000000000000000000000001
+10001110001000111111111111100010001110001
+10000000001000000000100000000010000000001
+11111110001111111000100011111110001111111
+00000010001000000000000000000010001000000
+11111110001000111110001111100010001111111
+00000000000000100000000000100000000000000
+11111110001000100000000000100010001111111
+00000010001000111111111111100010001000000
+00000010001000000000000000000010001000000
+11111110001000111111111111100010001111111
+10000000000000000000100000000000000000001
+10001110001111111000100011111110001110001
+10000010000000000000000000000000001000001
+11100010001000111111111111100010001000111
+10000000001000000000100000000010000000001
+10001111111111111000100011111111111110001
+10000000000000000000000000000000000000001
+11111111111111111111111111111111111111111"
+.Trim();
+            }
+            public string GetWallsPosition()
+            {
+                return wallsposition;
             }
             public void showmap(bool renderSpace = false)
             {
@@ -229,7 +260,7 @@ namespace KCK_Projekt
                         Console.SetCursorPosition(Console.CursorLeft + 1, Console.CursorTop);
                     }
                 }
-                Console.ReadKey();
+                //Console.ReadKey();
             }
         }
 
@@ -257,6 +288,10 @@ namespace KCK_Projekt
             {
                 return Y;
             }
+            /*public direction getDirection()
+            {
+                return pacdirection;
+            }*/
             public void Printpacman()
             {
                 Console.SetCursorPosition(X, Y);
@@ -264,13 +299,35 @@ namespace KCK_Projekt
                 Console.ReadKey();
             }
         }
+        public class Ghost
+        {
+            private int X;
+            private int Y;
+            public Ghost()
+            {
 
+            }
+            public int getXPosition()
+            {
+                return X;
+            }
+            public int getYPosition()
+            {
+                return Y;
+            }
+            public void Printpacman()
+            {
+                Console.SetCursorPosition(X, Y);
+                Console.Write("X");
+                Console.ReadKey();
+            }
+        }
         public class Game
         {
             private Map map;
             private Pacman pacman;
             private static Game game;
-
+            private string nickname;
             private Game()
             {
                 map = new Map();
@@ -282,11 +339,13 @@ namespace KCK_Projekt
                 if (game == null)
                 {
                     game = new Game();
-
                 }
                 return game;
             }
-
+            public void SetNickname(string nickname)
+            {
+                this.nickname = nickname;
+            }
             public Map GetMap()
             {
                 return map;
@@ -296,6 +355,55 @@ namespace KCK_Projekt
             {
                 return pacman;
 
+            }
+            private char BoardAt(int x, int y)
+            {
+                return map.GetWallsPosition()[y * 43 + x];
+            }
+            public bool CanMove(int X, int Y)
+            {
+
+                string wallspoints = map.GetWallsPosition();
+                if (map.GetWallsPosition()[Y * 43 + X] == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            public void PacmanMove(int X, int Y)
+            {
+                while (true)
+                {
+                    ConsoleKeyInfo ckey = Console.ReadKey();
+                    if (ckey.Key == ConsoleKey.UpArrow)
+                    {
+                        //if()
+                        pacman.setPosition(X, Y - 1);
+                    }
+                    else if (ckey.Key == ConsoleKey.DownArrow)
+                    {
+                        pacman.setPosition(X, Y + 1);
+                    }
+                    else if (ckey.Key == ConsoleKey.LeftArrow)
+                    {
+                        pacman.setPosition(X - 1, Y);
+                    }
+                    else if (ckey.Key == ConsoleKey.RightArrow)
+                    {
+                        pacman.setPosition(X + 1, Y);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            public void Score()
+            {
+                int score = 0;
             }
         }
 
@@ -356,36 +464,6 @@ namespace KCK_Projekt
                 //System.Threading.Thread.Sleep(waittime);
             }
             //}
-        }
-
-        public static void zakoncz()
-        {
-            Console.Clear();
-            while (true)
-            {
-                ConsoleKeyInfo ckey = Console.ReadKey();
-                if (ckey.Key == ConsoleKey.DownArrow)
-                {
-                    Console.WriteLine("Gra");
-                }
-                else if (ckey.Key == ConsoleKey.UpArrow)
-                {
-                    Console.WriteLine("Gra");
-                }
-                else if (ckey.Key == ConsoleKey.LeftArrow)
-                {
-                    Console.WriteLine("Gra");
-                }
-                else if (ckey.Key == ConsoleKey.RightArrow)
-                {
-                    Console.WriteLine("Gra");
-                }
-                else if (ckey.Key == ConsoleKey.Escape)
-                {
-                    break;
-                }
-            }
-            Console.Clear();
         }
         public static string drawMainMenu(List<string> items)
         {
