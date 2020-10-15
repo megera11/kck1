@@ -13,6 +13,7 @@ namespace KCK_Projekt
 {
     class Program
     {
+        Random random = new Random();
         static int indexMainMenu = 0;
         static int tabulator = 100;
         public static System.Timers.Timer timer = new System.Timers.Timer();
@@ -46,35 +47,29 @@ namespace KCK_Projekt
             while (true)
             {
                 string selectedMenuItem = drawMainMenu(menuItems);
-               
+
                 if (selectedMenuItem == "New Game")
                 {
                     timer.Stop();
                     Console.Clear();
-                   
-                    Console.Write("Your nickname (can not be blank): ");
-                    string nickname = Console.ReadLine();
-                    //Console.WriteLine(game.CanMove(0, 0));
-                    Console.Clear();
+
                     Game game = Game.GetGame();
-                    game.GetMap().showmap();
-                    game.GetPacman().PrintandUpdatepacman(20,17);
-                    game.Score();
-                    while (true)
+                    game.Init();
+                    while(true)
                     {
 
                         game.PacmanMove();
                         break;
 
                     }
-                    
-                        Console.Clear();
-                        timer.Start();
-
+                    Console.Clear();
+                    timer.Start();
                 }
                 else if (selectedMenuItem == "Scores")
                 {
-                    ScoresLadderDisplay();
+                    Scores scores = new Scores();
+                    scores.PrintScores();
+
                 }
                 else if (selectedMenuItem == "Settings")
                 {
@@ -107,28 +102,7 @@ namespace KCK_Projekt
             Console.Clear();
             timer.Start();
         }
-        public static void ScoresLadderDisplay()
-        {
-            timer.Stop();
-            Console.Clear();
-            int i = 0;
-            Console.SetCursorPosition(tabulator / 2, 5);
-            Console.WriteLine("SCORES: ");
-            using (StreamReader sr = new StreamReader("scores.txt"))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    Console.SetCursorPosition(tabulator / 2, (6 + i));
-                    Console.WriteLine((i + 1) + ". " + line);
-                    i++;
-                }
-            }
-            Console.WriteLine("Press any key to return to menu...");
-            Console.ReadKey();
-            Console.Clear();
-            timer.Start();
-        }
+
         public static void Settings()
         {
             int option = 0;
@@ -361,11 +335,18 @@ namespace KCK_Projekt
             {
                 return Y;
             }
-            public void Printghost()
+            public void setPosition(int X, int Y)
             {
+                this.X = X;
+                this.Y = Y;
+            }
+            public void Printghost(int X, int Y)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.SetCursorPosition(X, Y);
+                setPosition(X, Y);
                 Console.Write("X");
-                //Console.ReadKey();
+                Console.ResetColor();
             }
         }
         public class Game
@@ -373,31 +354,46 @@ namespace KCK_Projekt
             private Map map;
             private Pacman pacman;
             private static Game game;
+            private Ghost[] ghost;
             private string nickname;
-            StreamReader sr = new StreamReader("scores.txt");
-            private int score = 0;
+            private int score;
 
             private Game()
             {
                 map = new Map();
                 pacman = new Pacman();
+                ghost = new Ghost[4] {new Ghost(16,10), new Ghost(18,10), new Ghost(22,10), new Ghost(24,10) };
+                score = 0;
             }
 
             public static Game GetGame()
             {
+                game = null;
                 if (game == null)
                 {
                     game = new Game();
                 }
                 return game;
             }
-            
+
+            public void Init()
+            {
+                Console.Write("Your nickname (can not be blank): ");
+                string nickname = Console.ReadLine();
+                Console.Clear();
+                map.showmap();
+                pacman.PrintandUpdatepacman(20, 17);
+                ghost[0].Printghost(16, 10);
+                ghost[0].Printghost(18, 10);
+                ghost[0].Printghost(22, 10);
+                ghost[0].Printghost(24, 10);
+                SaveScore();
+            }
+           
             public Pacman GetPacman()
             {
-                return pacman;
-
+                 return pacman;
             }
-
             public Map GetMap()
             {
                 return map;
@@ -408,6 +404,10 @@ namespace KCK_Projekt
             public void SetNickname(string nickname)
             {
                 this.nickname = nickname;
+            }
+            public Ghost GetGhost(int i)
+            {
+                return ghost[i];
             }
             private char BoardAt(int x, int y)
             {
@@ -450,54 +450,59 @@ namespace KCK_Projekt
             {
                 while (true)
                 {
-                    
+
                     ConsoleKeyInfo ckey = Console.ReadKey(true);
-                    
+
                     if (ckey.Key == ConsoleKey.UpArrow && CanMove(pacman.getXPosition(), pacman.getYPosition(), 0))
                     {
                         Console.SetCursorPosition(pacman.getXPosition(), pacman.getYPosition());
                         Console.Write(" ");
                         pacman.PrintandUpdatepacman(pacman.getXPosition(), pacman.getYPosition() - 1);
-
-                        game.Score();
-
+                        game.SaveScore();
                     }
                     else if (ckey.Key == ConsoleKey.DownArrow && CanMove(pacman.getXPosition(), pacman.getYPosition(), 1))
                     {
                         Console.SetCursorPosition(pacman.getXPosition(), pacman.getYPosition());
                         Console.Write(" ");
                         pacman.PrintandUpdatepacman(pacman.getXPosition(), pacman.getYPosition() + 1);
-                        game.Score();
-                    
+                        game.SaveScore();
                     }
                     else if (ckey.Key == ConsoleKey.LeftArrow && CanMove(pacman.getXPosition(), pacman.getYPosition(), 2) )
                     {
 
                         Console.SetCursorPosition(pacman.getXPosition(), pacman.getYPosition());
                         Console.Write(" ");
-                        
                         pacman.PrintandUpdatepacman(pacman.getXPosition() - 1, pacman.getYPosition());
-                        game.Score();
-                      
+                        game.SaveScore();
+
                     }
                     else if (ckey.Key == ConsoleKey.RightArrow  && CanMove(pacman.getXPosition(), pacman.getYPosition(), 3))
                     {
                         Console.SetCursorPosition(pacman.getXPosition(), pacman.getYPosition());
                         Console.Write(" ");
                         pacman.PrintandUpdatepacman(pacman.getXPosition() + 1, pacman.getYPosition());
-                        game.Score();
-                       
+                        game.SaveScore();
+
                     }
-                    else if ( ckey.Key == ConsoleKey.Escape)
+                    else if (ckey.Key == ConsoleKey.Escape)
                     {
                         break;
                     }
                   
                 }
             }
-            public void Score()
+            public void SaveScore()
             {
-                
+
+                StreamReader sr = new StreamReader("scores.txt");
+                string line;
+                int i = 0;
+                while((line=sr.ReadLine())!=null)
+                {
+                    i++;
+                }
+                Scores[] scores = new Scores[i];
+
                 
                 if (PointAt(pacman.getXPosition(), pacman.getYPosition()) == '*')
                 {
@@ -512,8 +517,61 @@ namespace KCK_Projekt
                 Console.SetCursorPosition(44, 1);
                 Console.Write("Score: " + score);
             }
-        }
+            public void GhostMove(Ghost ghost)
+            {
 
+            }
+        }
+        public class Scores
+        {
+            private string nickname;
+            private int score;
+
+            public Scores() { }
+            public Scores(string nickname, int score)
+            {
+                this.nickname = nickname;
+                this.score = score;
+            }
+            public void SetScore(int score)
+            {
+                this.score = score;
+            }
+            public void SetNickname(string nickname)
+            {
+                this.nickname = nickname;
+            }
+            public int GetScore()
+            {
+                return score;
+            }
+            public string GetNickname()
+            {
+                return nickname;
+            }
+            public void PrintScores()
+            {
+                timer.Stop();
+                Console.Clear();
+                int i = 0;
+                Console.SetCursorPosition(tabulator / 2, 5);
+                Console.WriteLine("SCORES: ");
+                using (StreamReader sr = new StreamReader("scores.txt"))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        Console.SetCursorPosition(tabulator / 2, (6 + i));
+                        Console.WriteLine((i + 1) + ". " + line);
+                        i++;
+                    }
+                }
+                Console.WriteLine("Press a random key to back to menu...");
+                Console.ReadKey();
+                Console.Clear();
+                timer.Start();
+            }
+        }
         public static void printtitle(object source, ElapsedEventArgs e)
         {
             if (ontick % 2 == 0)
@@ -590,7 +648,7 @@ namespace KCK_Projekt
                 }
                 Console.ResetColor();
             }
-            ConsoleKeyInfo ckey = Console.ReadKey();
+            ConsoleKeyInfo ckey = Console.ReadKey(true);
             if (ckey.Key == ConsoleKey.DownArrow)
             {
                 if (indexMainMenu == items.Count - 1) { }
