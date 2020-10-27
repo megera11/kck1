@@ -8,6 +8,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace KCK_Projekt
 {
@@ -18,7 +19,7 @@ namespace KCK_Projekt
         static int tabulator = 100;
         public static System.Timers.Timer timer = new System.Timers.Timer();
         static int ontick = 1;
-        public static Mutex mut = new Mutex();
+        public static Mutex mut;
        
         public static void Main()
         {
@@ -54,7 +55,7 @@ namespace KCK_Projekt
                     timer.Stop();
                     Console.Clear();
 
-                    Game game = Game.GetGame();
+                    Game game = new Game();
                     game.Init();
                     Console.Clear();
                     timer.Start();
@@ -330,7 +331,7 @@ namespace KCK_Projekt
 
             public void Move(ConsoleKeyInfo ckey)
             {
-                mut.WaitOne();    
+                mut.WaitOne();
                 if (ckey.Key == ConsoleKey.UpArrow && CanMove(0))
                 {
                     Console.SetCursorPosition(X, Y);
@@ -371,6 +372,7 @@ namespace KCK_Projekt
 
             public void PrintandUpdatepacman(int X, int Y)
             {
+                mut.WaitOne();
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 if (X == 40 && Y == 10)
                 {
@@ -392,12 +394,13 @@ namespace KCK_Projekt
                     return;
                    
                  }
-                
-                
-                    Console.SetCursorPosition(X, Y);
-                    setPosition(X, Y);
+
+                setPosition(X, Y);
+                Console.SetCursorPosition(X, Y);
+                   
                     Console.Write("O");
                     Console.ResetColor();
+                mut.ReleaseMutex();
             }
         }
         public class Ghost : Entity
@@ -416,9 +419,9 @@ namespace KCK_Projekt
             public void Move()
             {
                 while(true){
-                    mut.WaitOne();
+                  
                     direction = new Random().Next(4);
-                    mut.ReleaseMutex();
+                   
                     
                     while (CanMove(direction))
                     {
@@ -460,7 +463,7 @@ namespace KCK_Projekt
                                break;
                             }
                             mut.ReleaseMutex();
-                            Thread.Sleep(100);
+                            Thread.Sleep(250);
                         
                     }
 
@@ -470,11 +473,13 @@ namespace KCK_Projekt
 
             public void Printghost(int X , int Y)
             {
+                mut.WaitOne();
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.SetCursorPosition(X, Y);
                 setPosition(X, Y);
+                Console.SetCursorPosition(X, Y);
                 Console.Write("X");
                 Console.ResetColor();
+                mut.ReleaseMutex();
             }
 
         }
@@ -482,12 +487,12 @@ namespace KCK_Projekt
         {
             private Map map;
             private Pacman pacman;
-            private static Game game;
             private Ghost[] ghost;
             private string nickname;
             private int score;
+            private bool lose = false;
 
-            private Game()
+            public Game()
             {
                 map = new Map();
                 pacman = new Pacman(20,17,map);
@@ -495,47 +500,43 @@ namespace KCK_Projekt
                 score = 0;
             }
 
-            public static Game GetGame()
+           
+            public  void CheckLose()
             {
-                if (game == null)
+                while (true)
                 {
-                    game = new Game();
+                    mut.WaitOne();
+                    if (pacman.getXPosition() == ghost[0].getXPosition() && pacman.getYPosition() == ghost[0].getYPosition())
+                    {
+                        lose = true;
+                    }
+                    else if (pacman.getXPosition() == ghost[1].getXPosition() && pacman.getYPosition() == ghost[1].getYPosition())
+                    {
+                        lose = true;
+                    }
+                    else if (pacman.getXPosition() == ghost[2].getXPosition() && pacman.getYPosition() == ghost[2].getYPosition())
+                    {
+                        lose = true;
+                    }
+                    else if (pacman.getXPosition() == ghost[3].getXPosition() && pacman.getYPosition() == ghost[3].getYPosition())
+                    {
+                        lose = true;
+                    }
+                    mut.ReleaseMutex();
                 }
-                return game;
-            }
-            public  bool CheckLose()
-            {
-                if(pacman.getXPosition() == ghost[0].getXPosition() && pacman.getYPosition() == ghost[0].getYPosition())
-                {
-                    return false;
-                }
-                else if (pacman.getXPosition() == ghost[1].getXPosition() && pacman.getYPosition() == ghost[0].getYPosition())
-                {
-                    return false;
-                }
-                else if (pacman.getXPosition() == ghost[2].getXPosition() && pacman.getYPosition() == ghost[0].getYPosition())
-                {
-                    return false;
-                }
-                else if (pacman.getXPosition() == ghost[3].getXPosition() && pacman.getYPosition() == ghost[0].getYPosition())
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+             
             }
 
             public void Init()
             {
+                mut = new Mutex();
                 Console.Write("Your nickname (can not be blank): ");
                 nickname = Console.ReadLine();
                 Console.Clear();
                 map.showmap();
                 pacman.PrintandUpdatepacman(20, 17);
-
-
+               
+               
                 ghost[0].Printghost(16,10);
                 ghost[1].Printghost(18,10);
                 ghost[2].Printghost(22,10);
@@ -545,7 +546,8 @@ namespace KCK_Projekt
                 ThreadStart ghostref2 = new ThreadStart(ghost[1].Move);
                 ThreadStart ghostref3 = new ThreadStart(ghost[2].Move);
                 ThreadStart ghostref4 = new ThreadStart(ghost[3].Move);
-
+                ThreadStart chekloseref = new ThreadStart(CheckLose);
+                Thread checkclosethread = new Thread(chekloseref);
                 Thread ghostthread1 = new Thread(ghostref1);
                 Thread ghostthread2 = new Thread(ghostref2);
                 Thread ghostthread3 = new Thread(ghostref3);
@@ -556,23 +558,36 @@ namespace KCK_Projekt
                 ghostthread2.Start();
                 ghostthread3.Start();
                 ghostthread4.Start();
-                while (ckey.Key != ConsoleKey.Escape)
+                checkclosethread.Start();
+                while (ckey.Key != ConsoleKey.Escape  )
                 {
-                    
-                    pacman.Move(ckey);
-                    if(CheckLose() == false)
+                   if(lose == true)
                     {
                         break;
                     }
+                    pacman.Move(ckey);
+                  
                     SaveScore();
                     ckey = Console.ReadKey(true);
                 }
+          
+
+
+
+
+
+
                 ghostthread1.Abort();
                 ghostthread2.Abort();
                 ghostthread3.Abort();
                 ghostthread4.Abort();
-
-                SaveScore();
+                checkclosethread.Abort();
+                Console.Clear();
+                Console.WriteLine("game over press space to continue");
+                while(ckey.Key  != ConsoleKey.Spacebar)
+                {
+                    ckey = Console.ReadKey(true);
+                }
             }
 
 
@@ -627,8 +642,10 @@ namespace KCK_Projekt
                     score += 3;
                     map.ChangePoint(pacman.getXPosition(), pacman.getYPosition());
                 }
+                mut.WaitOne();
                 Console.SetCursorPosition(44, 1);
                 Console.Write("Score: " + score);
+                mut.ReleaseMutex();
             }
           
         }
