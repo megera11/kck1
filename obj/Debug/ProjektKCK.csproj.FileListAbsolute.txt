@@ -19,3 +19,10 @@ F:\Nowy folder (2)\kck1\obj\Debug\ProjektKCK.pdb
 F:\Nowy folder (2)\kck1\bin\Debug\ProjektKCK.exe.config
 F:\Nowy folder (2)\kck1\bin\Debug\ProjektKCK.exe
 F:\Nowy folder (2)\kck1\bin\Debug\ProjektKCK.pdb
+C:\Users\HP\Documents\Visual Studio 2019\Nowy folder\kck1\bin\Debug\ProjektKCK.exe.config
+C:\Users\HP\Documents\Visual Studio 2019\Nowy folder\kck1\bin\Debug\ProjektKCK.exe
+C:\Users\HP\Documents\Visual Studio 2019\Nowy folder\kck1\bin\Debug\ProjektKCK.pdb
+C:\Users\HP\Documents\Visual Studio 2019\Nowy folder\kck1\obj\Debug\ProjektKCK.csprojAssemblyReference.cache
+C:\Users\HP\Documents\Visual Studio 2019\Nowy folder\kck1\obj\Debug\ProjektKCK.csproj.CoreCompileInputs.cache
+C:\Users\HP\Documents\Visual Studio 2019\Nowy folder\kck1\obj\Debug\ProjektKCK.exe
+C:\Users\HP\Documents\Visual Studio 2019\Nowy folder\kck1\obj\Debug\ProjektKCK.pdb
