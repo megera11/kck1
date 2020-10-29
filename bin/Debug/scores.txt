@@ -4,7 +4,27 @@ PJA 128
 CVB 32
 QWE 31
  27
+as 16
 UIO 14
-QWE 6
+as 14
+as 13
+as 13
+as 13
+as 13
+as 13
+as 13
+as 13
+as 13
+as 12
+ 6
 ASD 6
+as 6
+QWE 6
+as 6
+as 5
+as 0
+as 0
+as 0
+as 0
+as 0
  0

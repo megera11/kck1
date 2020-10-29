@@ -18,16 +18,16 @@ namespace KCK_Projekt
         static int indexMainMenu = 0;
         public static System.Timers.Timer timer = new System.Timers.Timer();
         static int ontick = 1;
-        public static Mutex mut;
+        public static Mutex mut  = new Mutex();
 
         public static void Main()
         {
             Console.Clear();
 
             //Muzyka
-            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation: @"pacmanmusic.wav");
-            sp.PlayLooping();
-            sp.Play();
+           // System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation: @"pacmanmusic.wav");
+           // sp.PlayLooping();
+           // sp.Play();
 
             List<string> menuItems = new List<string>()
             {
@@ -38,7 +38,7 @@ namespace KCK_Projekt
             };
             
             Console.CursorVisible = false;
-            mut = new Mutex();
+            
             ThreadStart printtitleref = new ThreadStart(printtitle);
             Thread titlethread = new Thread(printtitleref);
            
@@ -52,7 +52,7 @@ namespace KCK_Projekt
                 if (selectedMenuItem == "New Game")
                 {
                     titlethread.Abort();
-                    mut = new Mutex();
+                   
                     Console.Clear();
 
                     Game game = new Game();
@@ -60,6 +60,7 @@ namespace KCK_Projekt
                     Console.Clear();
                     titlethread = new Thread(printtitleref);
                     titlethread.Start();
+                    mut = new Mutex();
 
                 }
                 else if (selectedMenuItem == "Scores")
@@ -70,7 +71,9 @@ namespace KCK_Projekt
                 }
                 else if (selectedMenuItem == "About")
                 {
+                    
                     AboutDisplay();
+                   
                 }
                 else if (selectedMenuItem == "Exit")
                 {
@@ -81,8 +84,9 @@ namespace KCK_Projekt
         }
         public static void AboutDisplay()
         {
-            timer.Stop();
+            
             Console.Clear();
+            mut.WaitOne();
             Console.SetCursorPosition(5, 5);
             Console.WriteLine("Wykonali:");
             Console.SetCursorPosition(5, 6);
@@ -92,9 +96,11 @@ namespace KCK_Projekt
             Console.SetCursorPosition(5, 8);
             Console.WriteLine("Przemysław Jarocki");
             Console.WriteLine("Press any key to return to menu...");
+            mut.ReleaseMutex();
             Console.ReadKey();
             Console.Clear();
-            timer.Start();
+            
+            
         }
         public class Map
         {
@@ -552,10 +558,7 @@ namespace KCK_Projekt
                     {
                         break;
                     }
-                    if (score == 180)
-                    {
-                        break;
-                    }
+                  
                     pacman.Move(ckey);
 
                     ShowScore();
@@ -763,8 +766,9 @@ namespace KCK_Projekt
         }
         public static void printtitle()
         {
-            Frame();
-            while (true) { 
+           
+            while (true) {
+               
             if (ontick % 2 == 0)
             {
                 mut.WaitOne();
@@ -832,6 +836,7 @@ namespace KCK_Projekt
         }
         public static string drawMainMenu(List<string> items)
         {
+            Frame();
             for (int i = 0; i < items.Count; i++)
             {
                 if (i == indexMainMenu)
@@ -892,6 +897,7 @@ namespace KCK_Projekt
         }
         public static void Frame()
         {
+            mut.WaitOne();
             Console.SetCursorPosition(1, 8);
             Console.WriteLine("##################");
             Console.SetCursorPosition(1, 9);
@@ -920,10 +926,12 @@ namespace KCK_Projekt
             Console.WriteLine("#");
             Console.SetCursorPosition(1, 15);
             Console.WriteLine("##################");
+            mut.ReleaseMutex();
         }
 
         public static void PrintNewGame()
         {
+            mut.WaitOne();
             Console.SetCursorPosition(25, 9);
             Console.WriteLine("  ▒▒▒▒▒    ▄████▄     ");
             Console.SetCursorPosition(25, 10);
@@ -934,10 +942,12 @@ namespace KCK_Projekt
             Console.WriteLine(" ▒▒▒▒▒▒▒  █████▄      ");
             Console.SetCursorPosition(25, 13);
             Console.WriteLine(" ▒ ▒ ▒ ▒   ▀████▀     ");
+            mut.ReleaseMutex();
         }
 
         public static void PrintScoreTable()
         {
+            mut.WaitOne();
             Console.SetCursorPosition(25, 9);
             Console.WriteLine("       1       ");
             Console.SetCursorPosition(25, 10);
@@ -948,10 +958,12 @@ namespace KCK_Projekt
             Console.WriteLine("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
             Console.SetCursorPosition(25, 13);
             Console.WriteLine("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
+            mut.ReleaseMutex();
         }
 
         public static void PrintAuthors()
         {
+            mut.WaitOne();
             Console.SetCursorPosition(25, 9);
             Console.WriteLine("███████████");
             Console.SetCursorPosition(25, 10);
@@ -962,10 +974,12 @@ namespace KCK_Projekt
             Console.WriteLine("█▒▒▒▒▒▒▒▒▒█");
             Console.SetCursorPosition(25, 13);
             Console.WriteLine("███████████");
+            mut.ReleaseMutex();
         }
 
         public static void PrintExit()
         {
+            mut.WaitOne();
             Console.SetCursorPosition(25, 8);
             Console.WriteLine("___________");
             Console.SetCursorPosition(25, 9);
@@ -978,6 +992,7 @@ namespace KCK_Projekt
             Console.WriteLine("█ | | | | █");
             Console.SetCursorPosition(25, 13);
             Console.WriteLine("█_|_|_|_|_█");
+            mut.ReleaseMutex();
         }
         public static void Sort(List<Scores> score, int n)
         {
