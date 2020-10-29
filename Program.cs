@@ -52,6 +52,7 @@ namespace KCK_Projekt
                 if (selectedMenuItem == "New Game")
                 {
                     titlethread.Abort();
+                    mut = new Mutex();
                     Console.Clear();
 
                     Game game = new Game();
@@ -63,7 +64,7 @@ namespace KCK_Projekt
                 }
                 else if (selectedMenuItem == "Scores")
                 {
-                    Scores scores = new Scores();
+                    Scores scores  = new Scores();
                     scores.PrintScores();
 
                 }
@@ -494,7 +495,7 @@ namespace KCK_Projekt
                 pacman = new Pacman(20,17,map);
                 ghost = new Ghost[4] {new Ghost(16,10, map,0), new Ghost(18,10, map,1), new Ghost(22,10, map,2), new Ghost(24,10, map,3) };
                 score = 0;
-                max_score = 138;
+                max_score = 180;
                 lose = false;
             }
 
@@ -563,8 +564,9 @@ namespace KCK_Projekt
                         break;
                     }
                     pacman.Move(ckey);
-                  
-                   
+                    ShowScore();
+
+
                     ckey = Console.ReadKey(true);
                 }
                 scores.Add(new Scores(nickname, score));
@@ -579,20 +581,29 @@ namespace KCK_Projekt
                 {
                    
                     Console.WriteLine(" You won press space to continue");
+                    PrintWonScreen();
                     while (ckey.Key != ConsoleKey.Spacebar)
                     {
                         ckey = Console.ReadKey(true);
                     }
                 }
-                else
+                else if(lose == true)
                 {
-                    Console.WriteLine("game over press space to continue");
+                    Console.WriteLine("You lost press space to continue");
                     PrintLooseScreen();
                     while (ckey.Key != ConsoleKey.Spacebar)
                     {
                         ckey = Console.ReadKey(true);
                     }
 
+                }
+                else
+                {
+                    Console.WriteLine("press space to return to menu");
+                    while (ckey.Key != ConsoleKey.Spacebar)
+                    {
+                        ckey = Console.ReadKey(true);
+                    }
                 }
 
 
@@ -635,7 +646,22 @@ namespace KCK_Projekt
 
             private void PrintWonScreen()
             {
-
+                Console.WriteLine("  _______________");
+                Console.WriteLine(" |@@@@|     |####|");
+                Console.WriteLine(" |@@@@|     |####|");
+                Console.WriteLine(" |@@@@|     |####|");
+                Console.WriteLine("  @@@@|     |#### ");
+                Console.WriteLine("   @@@|     |### ");
+                Console.WriteLine("   `@@|_____|##'");
+                Console.WriteLine("        (O)");
+                Console.WriteLine("     .-'''''-.");
+                Console.WriteLine("   .'  * * *  `.");
+                Console.WriteLine("  :  *       *  :");
+                Console.WriteLine(" : ~   Y O U   ~ :");
+                Console.WriteLine(" : ~   W O N   ~ :");
+                Console.WriteLine("  :  *       *  :");
+                Console.WriteLine("   `.  * * *  .'");
+                Console.WriteLine("     `-.....-'");
             }
            
             public Pacman GetPacman()
@@ -720,9 +746,10 @@ namespace KCK_Projekt
             }
             public void PrintScores()
             {
-                timer.Stop();
+                
                 Console.Clear();
                 int i = 0;
+                mut.WaitOne();
                 Console.SetCursorPosition(tabulator / 2, 5);
                 Console.WriteLine("SCORES: ");
                 using (StreamReader sr = new StreamReader("scores.txt"))
@@ -736,9 +763,10 @@ namespace KCK_Projekt
                     }
                 }
                 Console.WriteLine("Press a random key to back to menu...");
+                mut.ReleaseMutex();
                 Console.ReadKey();
                 Console.Clear();
-                timer.Start();
+                
             }
         }
         public static void printtitle()
@@ -869,7 +897,7 @@ namespace KCK_Projekt
             {
                 for (int j = 0; j < n - 1; j++)
                 {
-                    if (score[j].GetScore() > score[i].GetScore())
+                    if (score[j].GetScore() < score[i].GetScore())
                     {
                         tem = score[i].GetScore();
                         tem1 = score[i].GetNickname();

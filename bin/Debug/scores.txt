@@ -1,4 +1,8 @@
-as 0
-as 0
-QWE 19
-ASD 6
+as 180
+as 180
+as 138
+as 138
+as 35
+as 30
+as 8
+as 6
