@@ -15,19 +15,18 @@ namespace KCK_Projekt
 {
     class Program
     {
-        
+
         static int indexMainMenu = 0;
-        static int tabulator = 100;
         public static System.Timers.Timer timer = new System.Timers.Timer();
         static int ontick = 1;
         public static Mutex mut;
-       
+
         public static void Main()
         {
             Console.Clear();
 
             //Muzyka
-            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation:@"pacmanmusic.wav");
+            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation: @"pacmanmusic.wav");
             sp.PlayLooping();
             sp.Play();
 
@@ -49,6 +48,7 @@ namespace KCK_Projekt
             while (true)
             {
                 string selectedMenuItem = drawMainMenu(menuItems);
+
 
                 if (selectedMenuItem == "New Game")
                 {
@@ -72,6 +72,7 @@ namespace KCK_Projekt
                 }
                 else if (selectedMenuItem == "Exit")
                 {
+                    Console.SetCursorPosition(0, 25);
                     Environment.Exit(0);
                 }
             }
@@ -80,30 +81,19 @@ namespace KCK_Projekt
         {
             timer.Stop();
             Console.Clear();
-            Console.SetCursorPosition(tabulator / 2, 5);
+            Console.SetCursorPosition(5, 5);
             Console.WriteLine("Wykonali:");
-            Console.SetCursorPosition(tabulator / 2, 6);
+            Console.SetCursorPosition(5, 6);
             Console.WriteLine("Weronika Żukowska");
-            Console.SetCursorPosition(tabulator / 2, 7);
+            Console.SetCursorPosition(5, 7);
             Console.WriteLine("Marek Hajduczenia");
-            Console.SetCursorPosition(tabulator / 2, 8);
+            Console.SetCursorPosition(5, 8);
             Console.WriteLine("Przemysław Jarocki");
             Console.WriteLine("Press any key to return to menu...");
             Console.ReadKey();
             Console.Clear();
             timer.Start();
         }
-
-        public static void Settings()
-        {
-            int option = 0;
-            timer.Stop();
-            Console.Clear();
-            Console.SetCursorPosition(tabulator / 2, 5);
-            Console.WriteLine("Choose your control settings");
-        }
-
-
         public class Map
         {
             private string walls;
@@ -287,7 +277,7 @@ namespace KCK_Projekt
             {
                 return map.GetWallsPosition()[y * 43 + x];
             }
-            public bool CanMove( int direction)
+            public bool CanMove(int direction)
             {
 
                 if (direction == 0 && BoardAt(X, Y - 1, map) == '0' && BoardAt(X - 1, Y - 1, map) == '0' && BoardAt(X + 1, Y - 1, map) == '0')
@@ -315,7 +305,7 @@ namespace KCK_Projekt
         }
         public class Pacman : Entity
         {
-            public Pacman(int X,int Y,Map map)
+            public Pacman(int X, int Y, Map map)
             {
                 this.X = X;
                 this.Y = Y;
@@ -367,7 +357,7 @@ namespace KCK_Projekt
                     Console.Write("O");
                     return;
                 }
-                 if ( X == 0 && Y == 10)
+                if (X == 0 && Y == 10)
                 {
                     Console.SetCursorPosition(0, 10);
                     Console.Write(" ");
@@ -375,20 +365,19 @@ namespace KCK_Projekt
                     setPosition(39, 10);
                     Console.Write("O");
                     return;
-                 }
+                }
 
                 setPosition(X, Y);
                 Console.SetCursorPosition(X, Y);
-                   
-                    Console.Write("O");
-                    Console.ResetColor();
+
+                Console.Write("O");
+                Console.ResetColor();
                 mut.ReleaseMutex();
             }
         }
         public class Ghost : Entity
         {
-            //Random random = new Random();
-            public Ghost(int X, int Y,Map map,int direction)
+            public Ghost(int X, int Y, Map map, int direction)
             {
                 this.X = X;
                 this.Y = Y;
@@ -401,69 +390,69 @@ namespace KCK_Projekt
             }
             public void Move()
             {
-                while(true){
-                  
+                while (true) {
+
                     direction = new Random().Next(4);
-                   
-                    
+
+
                     while (CanMove(direction))
                     {
-                            mut.WaitOne();
-                            if (direction == 0 && CanMove(0))
-                            {
-                                Console.SetCursorPosition(X, Y);
-                                if (PointAt(getXPosition(), getYPosition()) == '*')
-                                    Console.Write("*");
-                                else if(PointAt(getXPosition(), getYPosition()) == '+')
-                                    Console.Write("+");
-                                else
-                                Console.Write(" ");
-                                Printghost(X, Y - 1);
-                            }
-                            else if (direction == 1 && CanMove(1))
-                            {
-                                Console.SetCursorPosition(X, Y);
-                                if (PointAt(getXPosition(), getYPosition()) == '*')
-                                    Console.Write("*");
-                                else if (PointAt(getXPosition(), getYPosition()) == '+')
-                                    Console.Write("+");
-                                else
-                                    Console.Write(" ");
-                                Printghost(X, Y + 1);
-                            }
-                            else if (direction == 2 && CanMove(2))
-                            {
-
-                                Console.SetCursorPosition(X, Y);
-                                if (PointAt(getXPosition(), getYPosition()) == '*')
-                                    Console.Write("*");
-                                else if (PointAt(getXPosition(), getYPosition()) == '+')
-                                    Console.Write("+");
-                                else
-                                    Console.Write(" ");
-                                Printghost(X - 1, Y);
-                            }
-                            else if (direction == 3 && CanMove(3))
-                            {
-                               Console.SetCursorPosition(X, Y);
-                                if (PointAt(getXPosition(), getYPosition()) == '*')
-                                    Console.Write("*");
-                                else if (PointAt(getXPosition(), getYPosition()) == '+')
-                                    Console.Write("+");
-                                else
-                                    Console.Write(" ");
-                                Printghost(X + 1, Y);
-                            }
+                        mut.WaitOne();
+                        if (direction == 0 && CanMove(0))
+                        {
+                            Console.SetCursorPosition(X, Y);
+                            if (PointAt(getXPosition(), getYPosition()) == '*')
+                                Console.Write("*");
+                            else if (PointAt(getXPosition(), getYPosition()) == '+')
+                                Console.Write("+");
                             else
-                            {
-                               break;
-                            }
-                            mut.ReleaseMutex();
-                            Thread.Sleep(250);
+                                Console.Write(" ");
+                            Printghost(X, Y - 1);
+                        }
+                        else if (direction == 1 && CanMove(1))
+                        {
+                            Console.SetCursorPosition(X, Y);
+                            if (PointAt(getXPosition(), getYPosition()) == '*')
+                                Console.Write("*");
+                            else if (PointAt(getXPosition(), getYPosition()) == '+')
+                                Console.Write("+");
+                            else
+                                Console.Write(" ");
+                            Printghost(X, Y + 1);
+                        }
+                        else if (direction == 2 && CanMove(2))
+                        {
+
+                            Console.SetCursorPosition(X, Y);
+                            if (PointAt(getXPosition(), getYPosition()) == '*')
+                                Console.Write("*");
+                            else if (PointAt(getXPosition(), getYPosition()) == '+')
+                                Console.Write("+");
+                            else
+                                Console.Write(" ");
+                            Printghost(X - 1, Y);
+                        }
+                        else if (direction == 3 && CanMove(3))
+                        {
+                            Console.SetCursorPosition(X, Y);
+                            if (PointAt(getXPosition(), getYPosition()) == '*')
+                                Console.Write("*");
+                            else if (PointAt(getXPosition(), getYPosition()) == '+')
+                                Console.Write("+");
+                            else
+                                Console.Write(" ");
+                            Printghost(X + 1, Y);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        mut.ReleaseMutex();
+                        Thread.Sleep(150);
                     }
                 }
             }
-            public void Printghost(int X , int Y)
+            public void Printghost(int X, int Y)
             {
                 mut.WaitOne();
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -488,13 +477,13 @@ namespace KCK_Projekt
             public Game()
             {
                 map = new Map();
-                pacman = new Pacman(20,17,map);
-                ghost = new Ghost[4] {new Ghost(16,10, map,0), new Ghost(18,10, map,1), new Ghost(22,10, map,2), new Ghost(24,10, map,3) };
+                pacman = new Pacman(20, 17, map);
+                ghost = new Ghost[4] { new Ghost(16, 10, map, 0), new Ghost(18, 10, map, 1), new Ghost(22, 10, map, 2), new Ghost(24, 10, map, 3) };
                 score = 0;
             }
 
-           
-            public  void CheckLose()
+
+            public void CheckLose()
             {
                 while (true)
                 {
@@ -517,7 +506,7 @@ namespace KCK_Projekt
                     }
                     mut.ReleaseMutex();
                 }
-             
+
             }
             public void Init()
             {
@@ -529,10 +518,10 @@ namespace KCK_Projekt
                 pacman.PrintandUpdatepacman(20, 17);
                 ShowScore();
 
-                ghost[0].Printghost(16,10);
-                ghost[1].Printghost(18,10);
-                ghost[2].Printghost(22,10);
-                ghost[3].Printghost(24,10);
+                ghost[0].Printghost(16, 10);
+                ghost[1].Printghost(18, 10);
+                ghost[2].Printghost(22, 10);
+                ghost[3].Printghost(24, 10);
 
                 ThreadStart ghostref1 = new ThreadStart(ghost[0].Move);
                 ThreadStart ghostref2 = new ThreadStart(ghost[1].Move);
@@ -551,15 +540,19 @@ namespace KCK_Projekt
                 ghostthread3.Start();
                 ghostthread4.Start();
                 checkclosethread.Start();
-                while (ckey.Key != ConsoleKey.Escape  )
+                while (ckey.Key != ConsoleKey.Escape)
                 {
-                   if(lose == true)
+                    if (lose == true)
+                    {
+                        break;
+                    }
+                    if (score == 180)
                     {
                         break;
                     }
                     pacman.Move(ckey);
-                  
-                    SaveScore();
+
+                    ShowScore();
                     ckey = Console.ReadKey(true);
                 }
                 scores.Add(new Scores(nickname, score));
@@ -571,14 +564,14 @@ namespace KCK_Projekt
                 checkclosethread.Abort();
                 Console.Clear();
                 Console.WriteLine("game over press space to continue");
-                while(ckey.Key  != ConsoleKey.Spacebar)
+                while (ckey.Key != ConsoleKey.Spacebar)
                 {
                     ckey = Console.ReadKey(true);
                 }
             }
             public Pacman GetPacman()
             {
-                 return pacman;
+                return pacman;
             }
             public Map GetMap()
             {
@@ -592,7 +585,7 @@ namespace KCK_Projekt
             {
                 return ghost[i];
             }
-            
+
             private char PointAt(int X, int Y)
             {
                 return map.GetPoints()[Y * 43 + X];
@@ -604,7 +597,7 @@ namespace KCK_Projekt
                     score++;
                     map.ChangePoint(pacman.getXPosition(), pacman.getYPosition());
                 }
-                else if(PointAt(pacman.getXPosition(), pacman.getYPosition()) == '+')
+                else if (PointAt(pacman.getXPosition(), pacman.getYPosition()) == '+')
                 {
                     score += 3;
                     map.ChangePoint(pacman.getXPosition(), pacman.getYPosition());
@@ -627,8 +620,8 @@ namespace KCK_Projekt
                     i++;
                 }
                 sr.Close();
-                Sort(scores, i);
-                using(StreamWriter sw = new StreamWriter("scores.txt"))
+                Sort(scores, i + 1);
+                using (StreamWriter sw = new StreamWriter("scores.txt"))
                 {
                     while (scores.Count() != j)
                     {
@@ -637,7 +630,7 @@ namespace KCK_Projekt
                     }
                 }
             }
-          
+
         }
         public class Scores
         {
@@ -671,14 +664,14 @@ namespace KCK_Projekt
                 timer.Stop();
                 Console.Clear();
                 int i = 0;
-                Console.SetCursorPosition(tabulator / 2, 5);
+                Console.SetCursorPosition(5, 5);
                 Console.WriteLine("SCORES: ");
                 using (StreamReader sr = new StreamReader("scores.txt"))
                 {
                     string line;
                     while ((line = sr.ReadLine()) != null)
                     {
-                        Console.SetCursorPosition(tabulator / 2, (6 + i));
+                        Console.SetCursorPosition(5, (6 + i));
                         Console.WriteLine((i + 1) + ". " + line);
                         i++;
                     }
@@ -691,9 +684,10 @@ namespace KCK_Projekt
         }
         public static void printtitle(object source, ElapsedEventArgs e)
         {
+            Frame();
             if (ontick % 2 == 0)
             {
-              
+
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.SetCursorPosition(0, 0);
                 Console.Write("_/_/_/_/_/  _/      _/  _/_/_/    _/_/_/_/");
@@ -718,7 +712,7 @@ namespace KCK_Projekt
                 Console.ResetColor();
                 ontick = 1;
                 //System.Threading.Thread.Sleep(waittime);
-             
+
             }
             else if (ontick % 2 == 1)
             {
@@ -745,10 +739,8 @@ namespace KCK_Projekt
                 Console.WriteLine(" _/      _/  _/    _/  _/      _/     ");
                 Console.ResetColor();
                 ontick = 2;
-                //System.Threading.Thread.Sleep(waittime);
-               
+
             }
-            //}
         }
         public static string drawMainMenu(List<string> items)
         {
@@ -756,14 +748,22 @@ namespace KCK_Projekt
             {
                 if (i == indexMainMenu)
                 {
+                    if (i == 0)
+                        PrintNewGame();
+                    if (i == 1)
+                        PrintScoreTable();
+                    if (i == 2)
+                        PrintAuthors();
+                    if (i == 3)
+                        PrintExit();
                     Console.BackgroundColor = ConsoleColor.Gray;
                     Console.ForegroundColor = ConsoleColor.Black;
-                    Console.SetCursorPosition((tabulator + 5) / 2, 10 + i);
+                    Console.SetCursorPosition(5, 10 + i);
                     Console.WriteLine(">>" + items[i]);
                 }
                 else
                 {
-                    Console.SetCursorPosition((tabulator) / 2, 10 + i);
+                    Console.SetCursorPosition(5, 10 + i);
                     Console.WriteLine(items[i]);
                 }
                 Console.ResetColor();
@@ -798,6 +798,95 @@ namespace KCK_Projekt
             Console.Clear();
             return "";
         }
+        public static void Frame()
+        {
+            Console.SetCursorPosition(1, 8);
+            Console.WriteLine("##################");
+            Console.SetCursorPosition(1, 9);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(18, 9);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(1, 10);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(18, 10);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(1, 11);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(18, 11);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(1, 12);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(18, 12);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(1, 13);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(18, 13);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(1, 14);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(18, 14);
+            Console.WriteLine("#");
+            Console.SetCursorPosition(1, 15);
+            Console.WriteLine("##################");
+        }
+
+        public static void PrintNewGame()
+        {
+            Console.SetCursorPosition(25, 9);
+            Console.WriteLine("  ▒▒▒▒▒    ▄████▄     ");
+            Console.SetCursorPosition(25, 10);
+            Console.WriteLine(" ▒─▄▒─▄▒  ███▄█▀      ");
+            Console.SetCursorPosition(25, 11);
+            Console.WriteLine(" ▒▒▒▒▒▒▒ █████  █  █  ");
+            Console.SetCursorPosition(25, 12);
+            Console.WriteLine(" ▒▒▒▒▒▒▒  █████▄      ");
+            Console.SetCursorPosition(25, 13);
+            Console.WriteLine(" ▒ ▒ ▒ ▒   ▀████▀     ");
+        }
+
+        public static void PrintScoreTable()
+        {
+            Console.SetCursorPosition(25, 9);
+            Console.WriteLine("       1       ");
+            Console.SetCursorPosition(25, 10);
+            Console.WriteLine("  2  ▒▒▒▒▒     ");
+            Console.SetCursorPosition(25, 11);
+            Console.WriteLine("▒▒▒▒▒▒▒▒▒▒  3  ");
+            Console.SetCursorPosition(25, 12);
+            Console.WriteLine("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
+            Console.SetCursorPosition(25, 13);
+            Console.WriteLine("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
+        }
+
+        public static void PrintAuthors()
+        {
+            Console.SetCursorPosition(25, 9);
+            Console.WriteLine("███████████");
+            Console.SetCursorPosition(25, 10);
+            Console.WriteLine("█▒▒▒▒▒▒▒▒▒█");
+            Console.SetCursorPosition(25, 11);
+            Console.WriteLine("█▒▒About▒▒█");
+            Console.SetCursorPosition(25, 12);
+            Console.WriteLine("█▒▒▒▒▒▒▒▒▒█");
+            Console.SetCursorPosition(25, 13);
+            Console.WriteLine("███████████");
+        }
+
+        public static void PrintExit()
+        {
+            Console.SetCursorPosition(25, 8);
+            Console.WriteLine("___________");
+            Console.SetCursorPosition(25, 9);
+            Console.WriteLine("█ | | | | █");
+            Console.SetCursorPosition(25, 10);
+            Console.WriteLine("█ |_| |_| █ Bye");
+            Console.SetCursorPosition(25, 11);
+            Console.WriteLine("█  _   _ *█  Bye!");
+            Console.SetCursorPosition(25, 12);
+            Console.WriteLine("█ | | | | █");
+            Console.SetCursorPosition(25, 13);
+            Console.WriteLine("█_|_|_|_|_█");
+        }
         public static void Sort(List<Scores> score, int n)
         {
             int tem;
@@ -806,7 +895,7 @@ namespace KCK_Projekt
             {
                 for (int j = 0; j < n - 1; j++)
                 {
-                    if (score[j].GetScore() > score[i].GetScore())
+                    if (score[j].GetScore() < score[i].GetScore())
                     {
                         tem = score[i].GetScore();
                         tem1 = score[i].GetNickname();
