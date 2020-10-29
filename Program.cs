@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Timers;
 using System.Media;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -27,9 +26,9 @@ namespace KCK_Projekt
             Console.Clear();
 
             //Muzyka
-            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation:@"pacmanmusic.wav");
-            sp.PlayLooping();
-            sp.Play();
+            //System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation:@"pacmanmusic.wav");
+            //sp.PlayLooping();
+            //sp.Play();
 
             List<string> menuItems = new List<string>()
             {
@@ -487,7 +486,7 @@ namespace KCK_Projekt
             private bool lose;
             private int max_score;
             private int i;
-            private bool lose = false;
+        
 
             public Game()
             {
@@ -565,7 +564,7 @@ namespace KCK_Projekt
                     }
                     pacman.Move(ckey);
                   
-                    SaveScore();
+                   
                     ckey = Console.ReadKey(true);
                 }
                 scores.Add(new Scores(nickname, score));
@@ -666,7 +665,7 @@ namespace KCK_Projekt
             
             
           
-        }
+        
             public void SaveScoreToFile()
             {
                 StreamReader sr = new StreamReader("scores.txt");
