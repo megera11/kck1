@@ -38,13 +38,13 @@ namespace KCK_Projekt
                 "About",
                 "Exit"
             };
-
+            
             Console.CursorVisible = false;
-
-            timer.Interval = 250;
-            timer.Elapsed += printtitle;
-            timer.AutoReset = true;
-            timer.Start();
+            mut = new Mutex();
+            ThreadStart printtitleref = new ThreadStart(printtitle);
+            Thread titlethread = new Thread(printtitleref);
+           
+            titlethread.Start();
 
             while (true)
             {
@@ -52,13 +52,15 @@ namespace KCK_Projekt
 
                 if (selectedMenuItem == "New Game")
                 {
-                    timer.Stop();
+                    titlethread.Abort();
                     Console.Clear();
 
                     Game game = new Game();
                     game.Init();
                     Console.Clear();
-                    timer.Start();
+                    titlethread = new Thread(printtitleref);
+                    titlethread.Start();
+
                 }
                 else if (selectedMenuItem == "Scores")
                 {
@@ -490,14 +492,16 @@ namespace KCK_Projekt
             private Ghost[] ghost;
             private string nickname;
             private int score;
-            private bool lose = false;
-
+            private bool lose;
+            private int max_score;
             public Game()
             {
                 map = new Map();
                 pacman = new Pacman(20,17,map);
                 ghost = new Ghost[4] {new Ghost(16,10, map,0), new Ghost(18,10, map,1), new Ghost(22,10, map,2), new Ghost(24,10, map,3) };
                 score = 0;
+                max_score = 138;
+                lose = false;
             }
 
            
@@ -561,7 +565,7 @@ namespace KCK_Projekt
                 checkclosethread.Start();
                 while (ckey.Key != ConsoleKey.Escape  )
                 {
-                   if(lose == true)
+                   if(lose == true || score == max_score)
                     {
                         break;
                     }
@@ -570,7 +574,7 @@ namespace KCK_Projekt
                     SaveScore();
                     ckey = Console.ReadKey(true);
                 }
-          
+                
 
 
 
@@ -583,43 +587,30 @@ namespace KCK_Projekt
                 ghostthread4.Abort();
                 checkclosethread.Abort();
                 Console.Clear();
-                Console.WriteLine("game over press space to continue");
-                while(ckey.Key  != ConsoleKey.Spacebar)
+                if (score == max_score)
                 {
-                    ckey = Console.ReadKey(true);
+                   
+                    Console.WriteLine(" You won press space to continue");
+                    while (ckey.Key != ConsoleKey.Spacebar)
+                    {
+                        ckey = Console.ReadKey(true);
+                    }
                 }
-            }
+                else
+                {
+                    Console.WriteLine("game over press space to continue");
+                    PrintLooseScreen();
+                    while (ckey.Key != ConsoleKey.Spacebar)
+                    {
+                        ckey = Console.ReadKey(true);
+                    }
+
+                }
 
 
-
-           
-           
-            public Pacman GetPacman()
-            {
-                 return pacman;
-            }
-            public Map GetMap()
-            {
-                return map;
             }
 
-
-
-            public void SetNickname(string nickname)
-            {
-                this.nickname = nickname;
-            }
-            public Ghost GetGhost(int i)
-            {
-                return ghost[i];
-            }
-            
-            private char PointAt(int X, int Y)
-            {
-                return map.GetPoints()[Y * 43 + X];
-            }
-            
-            public void SaveScore()
+            private void SaveScore()
             {
 
                 StreamReader sr = new StreamReader("scores.txt");
@@ -647,6 +638,56 @@ namespace KCK_Projekt
                 Console.Write("Score: " + score);
                 mut.ReleaseMutex();
             }
+
+           private void PrintLooseScreen()
+            {
+                Console.WriteLine("  _");
+                Console.WriteLine(" | |");
+                Console.WriteLine(" | |===( )   //////");
+                Console.WriteLine(" |_|   |||  | o o|");
+                Console.WriteLine("        ||| ( c  )                  ____");
+                Console.WriteLine("         ||| | =/                  ||   |_ ");
+                Console.WriteLine("          ||||||                   ||     |");
+                Console.WriteLine("          ||||||                ...||__/|- ");
+                Console.WriteLine("          ||||||             __|________|__");
+                Console.WriteLine("            |||             |______________|");
+                Console.WriteLine("            |||             || ||      || ||");
+                Console.WriteLine("            |||             || ||      || ||");
+                Console.WriteLine("  ----------|||-------------||-||------||-||-------");
+                Console.WriteLine("            |__>            || ||      || ||");
+            }
+
+            private void PrintWonScreen()
+            {
+
+            }
+           
+            public Pacman GetPacman()
+            {
+                 return pacman;
+            }
+            public Map GetMap()
+            {
+                return map;
+            }
+
+
+
+            public void SetNickname(string nickname)
+            {
+                this.nickname = nickname;
+            }
+            public Ghost GetGhost(int i)
+            {
+                return ghost[i];
+            }
+            
+            private char PointAt(int X, int Y)
+            {
+                return map.GetPoints()[Y * 43 + X];
+            }
+            
+            
           
         }
         public class Scores
@@ -699,11 +740,12 @@ namespace KCK_Projekt
                 timer.Start();
             }
         }
-        public static void printtitle(object source, ElapsedEventArgs e)
+        public static void printtitle()
         {
+            while (true) { 
             if (ontick % 2 == 0)
             {
-              
+                mut.WaitOne();
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.SetCursorPosition(0, 0);
                 Console.Write("_/_/_/_/_/  _/      _/  _/_/_/    _/_/_/_/");
@@ -727,12 +769,13 @@ namespace KCK_Projekt
                 Console.WriteLine(" _/      _/  _/    _/  _/      _/     ");
                 Console.ResetColor();
                 ontick = 1;
-                //System.Threading.Thread.Sleep(waittime);
-             
+                mut.ReleaseMutex();
+
+                
             }
             else if (ontick % 2 == 1)
             {
-             
+                mut.WaitOne();
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.SetCursorPosition(0, 0);
                 Console.Write("_/_/_/_/_/  _/      _/  _/_/_/    _/_/_/_/");
@@ -756,10 +799,14 @@ namespace KCK_Projekt
                 Console.WriteLine(" _/      _/  _/    _/  _/      _/     ");
                 Console.ResetColor();
                 ontick = 2;
-                //System.Threading.Thread.Sleep(waittime);
+                mut.ReleaseMutex();
+
+                
                
             }
-            //}
+                Thread.Sleep(150);
+            }
+            
         }
         public static string drawMainMenu(List<string> items)
         {
@@ -767,15 +814,19 @@ namespace KCK_Projekt
             {
                 if (i == indexMainMenu)
                 {
+                    mut.WaitOne();
                     Console.BackgroundColor = ConsoleColor.Gray;
                     Console.ForegroundColor = ConsoleColor.Black;
                     Console.SetCursorPosition((tabulator + 5) / 2, 10 + i);
                     Console.WriteLine("<<<" + items[i] + ">>>");
+                    mut.ReleaseMutex();
                 }
                 else
                 {
+                    mut.WaitOne();
                     Console.SetCursorPosition((tabulator) / 2, 10 + i);
                     Console.WriteLine(items[i]);
+                    mut.ReleaseMutex();
                 }
                 Console.ResetColor();
             }
