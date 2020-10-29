@@ -8,6 +8,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Text;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace KCK_Projekt
@@ -26,15 +27,14 @@ namespace KCK_Projekt
             Console.Clear();
 
             //Muzyka
-           // System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation:@"pacmanmusic.wav");
-           // sp.PlayLooping();
-           // sp.Play();
+            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(soundLocation:@"pacmanmusic.wav");
+            sp.PlayLooping();
+            sp.Play();
 
             List<string> menuItems = new List<string>()
             {
                 "New Game",
                 "Scores",
-                "Settings",
                 "About",
                 "Exit"
             };
@@ -67,10 +67,6 @@ namespace KCK_Projekt
                     Scores scores = new Scores();
                     scores.PrintScores();
 
-                }
-                else if (selectedMenuItem == "Settings")
-                {
-                    Console.WriteLine("Settings chosen");
                 }
                 else if (selectedMenuItem == "About")
                 {
@@ -293,7 +289,6 @@ namespace KCK_Projekt
             {
                 return map.GetWallsPosition()[y * 43 + x];
             }
-
             public bool CanMove( int direction)
             {
 
@@ -327,10 +322,7 @@ namespace KCK_Projekt
                 this.X = X;
                 this.Y = Y;
                 this.map = map;
-
             }
-
-
             public void Move(ConsoleKeyInfo ckey)
             {
                 mut.WaitOne();
@@ -339,31 +331,24 @@ namespace KCK_Projekt
                     Console.SetCursorPosition(X, Y);
                     Console.Write(" ");
                     PrintandUpdatepacman(X, Y - 1);
-
                 }
                 else if (ckey.Key == ConsoleKey.DownArrow && CanMove(1))
                 {
                     Console.SetCursorPosition(X, Y);
                     Console.Write(" ");
                     PrintandUpdatepacman(X, Y + 1);
-
                 }
                 else if (ckey.Key == ConsoleKey.LeftArrow && CanMove(2))
                 {
-
                     Console.SetCursorPosition(X, Y);
                     Console.Write(" ");
                     PrintandUpdatepacman(X - 1, Y);
-
-
                 }
                 else if (ckey.Key == ConsoleKey.RightArrow && CanMove(3))
                 {
                     Console.SetCursorPosition(X, Y);
                     Console.Write(" ");
                     PrintandUpdatepacman(X + 1, Y);
-
-
                 }
                 else
                 {
@@ -371,7 +356,6 @@ namespace KCK_Projekt
                 }
                 mut.ReleaseMutex();
             }
-
             public void PrintandUpdatepacman(int X, int Y)
             {
                 mut.WaitOne();
@@ -384,7 +368,6 @@ namespace KCK_Projekt
                     setPosition(1, 10);
                     Console.Write("O");
                     return;
-                    
                 }
                  if ( X == 0 && Y == 10)
                 {
@@ -394,7 +377,6 @@ namespace KCK_Projekt
                     setPosition(39, 10);
                     Console.Write("O");
                     return;
-                   
                  }
 
                 setPosition(X, Y);
@@ -407,9 +389,7 @@ namespace KCK_Projekt
         }
         public class Ghost : Entity
         {
-            Random random = new Random();
-         
-
+            //Random random = new Random();
             public Ghost(int X, int Y,Map map,int direction)
             {
                 this.X = X;
@@ -417,7 +397,10 @@ namespace KCK_Projekt
                 this.map = map;
                 this.direction = direction;
             }
-
+            private char PointAt(int X, int Y)
+            {
+                return map.GetPoints()[Y * 43 + X];
+            }
             public void Move()
             {
                 while(true){
@@ -427,38 +410,51 @@ namespace KCK_Projekt
                     
                     while (CanMove(direction))
                     {
-                        
                             mut.WaitOne();
                             if (direction == 0 && CanMove(0))
                             {
                                 Console.SetCursorPosition(X, Y);
+                                if (PointAt(getXPosition(), getYPosition()) == '*')
+                                    Console.Write("*");
+                                else if(PointAt(getXPosition(), getYPosition()) == '+')
+                                    Console.Write("+");
+                                else
                                 Console.Write(" ");
                                 Printghost(X, Y - 1);
-
                             }
                             else if (direction == 1 && CanMove(1))
                             {
                                 Console.SetCursorPosition(X, Y);
-                                Console.Write(" ");
+                                if (PointAt(getXPosition(), getYPosition()) == '*')
+                                    Console.Write("*");
+                                else if (PointAt(getXPosition(), getYPosition()) == '+')
+                                    Console.Write("+");
+                                else
+                                    Console.Write(" ");
                                 Printghost(X, Y + 1);
-
                             }
                             else if (direction == 2 && CanMove(2))
                             {
 
                                 Console.SetCursorPosition(X, Y);
-                                Console.Write(" ");
+                                if (PointAt(getXPosition(), getYPosition()) == '*')
+                                    Console.Write("*");
+                                else if (PointAt(getXPosition(), getYPosition()) == '+')
+                                    Console.Write("+");
+                                else
+                                    Console.Write(" ");
                                 Printghost(X - 1, Y);
-
-
                             }
                             else if (direction == 3 && CanMove(3))
                             {
                                Console.SetCursorPosition(X, Y);
-                               Console.Write(" ");
-                               Printghost(X + 1, Y);
-
-
+                                if (PointAt(getXPosition(), getYPosition()) == '*')
+                                    Console.Write("*");
+                                else if (PointAt(getXPosition(), getYPosition()) == '+')
+                                    Console.Write("+");
+                                else
+                                    Console.Write(" ");
+                                Printghost(X + 1, Y);
                             }
                             else
                             {
@@ -466,13 +462,9 @@ namespace KCK_Projekt
                             }
                             mut.ReleaseMutex();
                             Thread.Sleep(250);
-                        
                     }
-
                 }
             }
-
-
             public void Printghost(int X , int Y)
             {
                 mut.WaitOne();
@@ -483,7 +475,6 @@ namespace KCK_Projekt
                 Console.ResetColor();
                 mut.ReleaseMutex();
             }
-
         }
         public class Game
         {
@@ -491,9 +482,13 @@ namespace KCK_Projekt
             private Pacman pacman;
             private Ghost[] ghost;
             private string nickname;
+            private List<Scores> scores = new List<Scores>();
             private int score;
             private bool lose;
             private int max_score;
+            private int i;
+            private bool lose = false;
+
             public Game()
             {
                 map = new Map();
@@ -530,7 +525,6 @@ namespace KCK_Projekt
                 }
              
             }
-
             public void Init()
             {
                 mut = new Mutex();
@@ -539,8 +533,8 @@ namespace KCK_Projekt
                 Console.Clear();
                 map.showmap();
                 pacman.PrintandUpdatepacman(20, 17);
-               
-               
+                ShowScore();
+
                 ghost[0].Printghost(16,10);
                 ghost[1].Printghost(18,10);
                 ghost[2].Printghost(22,10);
@@ -574,13 +568,8 @@ namespace KCK_Projekt
                     SaveScore();
                     ckey = Console.ReadKey(true);
                 }
-                
-
-
-
-
-
-
+                scores.Add(new Scores(nickname, score));
+                SaveScoreToFile();
                 ghostthread1.Abort();
                 ghostthread2.Abort();
                 ghostthread3.Abort();
@@ -609,20 +598,8 @@ namespace KCK_Projekt
 
 
             }
-
-            private void SaveScore()
+            public void ShowScore()
             {
-
-                StreamReader sr = new StreamReader("scores.txt");
-                string line;
-                int i = 0;
-                while((line=sr.ReadLine())!=null)
-                {
-                    i++;
-                }
-                Scores[] scores = new Scores[i];
-
-                
                 if (PointAt(pacman.getXPosition(), pacman.getYPosition()) == '*')
                 {
                     score++;
@@ -634,7 +611,7 @@ namespace KCK_Projekt
                     map.ChangePoint(pacman.getXPosition(), pacman.getYPosition());
                 }
                 mut.WaitOne();
-                Console.SetCursorPosition(44, 1);
+                Console.SetCursorPosition(1, 25);
                 Console.Write("Score: " + score);
                 mut.ReleaseMutex();
             }
@@ -688,6 +665,31 @@ namespace KCK_Projekt
             }
             
             
+          
+        }
+            public void SaveScoreToFile()
+            {
+                StreamReader sr = new StreamReader("scores.txt");
+                string line;
+                i = 0;
+                int j = 0;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    string[] temp = line.Split(' ');
+                    scores.Add(new Scores(temp[0], Int32.Parse(temp[1])));
+                    i++;
+                }
+                sr.Close();
+                Sort(scores, i);
+                using(StreamWriter sw = new StreamWriter("scores.txt"))
+                {
+                    while (scores.Count() != j)
+                    {
+                        sw.WriteLine(scores[j].GetNickname() + " " + scores[j].GetScore());
+                        j++;
+                    }
+                }
+            }
           
         }
         public class Scores
@@ -859,6 +861,26 @@ namespace KCK_Projekt
             }
             Console.Clear();
             return "";
+        }
+        public static void Sort(List<Scores> score, int n)
+        {
+            int tem;
+            string tem1;
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n - 1; j++)
+                {
+                    if (score[j].GetScore() > score[i].GetScore())
+                    {
+                        tem = score[i].GetScore();
+                        tem1 = score[i].GetNickname();
+                        score[i].SetScore(score[j].GetScore());
+                        score[i].SetNickname(score[j].GetNickname());
+                        score[j].SetScore(tem);
+                        score[j].SetNickname(tem1);
+                    }
+                }
+            }
         }
     }
 }
