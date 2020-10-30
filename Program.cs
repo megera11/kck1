@@ -618,43 +618,7 @@ namespace KCK_Projekt
                 mut.ReleaseMutex();
             }
 
-           private void PrintLooseScreen()
-            {
-                Console.WriteLine("  _");
-                Console.WriteLine(" | |");
-                Console.WriteLine(" | |===( )   //////");
-                Console.WriteLine(" |_|   |||  | o o|");
-                Console.WriteLine("        ||| ( c  )                  ____");
-                Console.WriteLine("         ||| | =/                  ||   |_ ");
-                Console.WriteLine("          ||||||                   ||     |");
-                Console.WriteLine("          ||||||                ...||__/|- ");
-                Console.WriteLine("          ||||||             __|________|__");
-                Console.WriteLine("            |||             |______________|");
-                Console.WriteLine("            |||             || ||      || ||");
-                Console.WriteLine("            |||             || ||      || ||");
-                Console.WriteLine("  ----------|||-------------||-||------||-||-------");
-                Console.WriteLine("            |__>            || ||      || ||");
-            }
-
-            private void PrintWonScreen()
-            {
-                Console.WriteLine("  _______________");
-                Console.WriteLine(" |@@@@|     |####|");
-                Console.WriteLine(" |@@@@|     |####|");
-                Console.WriteLine(" |@@@@|     |####|");
-                Console.WriteLine("  @@@@|     |#### ");
-                Console.WriteLine("   @@@|     |### ");
-                Console.WriteLine("   `@@|_____|##'");
-                Console.WriteLine("        (O)");
-                Console.WriteLine("     .-'''''-.");
-                Console.WriteLine("   .'  * * *  `.");
-                Console.WriteLine("  :  *       *  :");
-                Console.WriteLine(" : ~   Y O U   ~ :");
-                Console.WriteLine(" : ~   W O N   ~ :");
-                Console.WriteLine("  :  *       *  :");
-                Console.WriteLine("   `.  * * *  .'");
-                Console.WriteLine("     `-.....-'");
-            }
+           
            
             public Pacman GetPacman()
             {
@@ -978,6 +942,43 @@ namespace KCK_Projekt
             Console.WriteLine("█ | | | | █");
             Console.SetCursorPosition(25, 13);
             Console.WriteLine("█_|_|_|_|_█");
+        }
+        private static void PrintLooseScreen()
+        {
+            Console.WriteLine("  _");
+            Console.WriteLine(" | |");
+            Console.WriteLine(" | |===( )   //////");
+            Console.WriteLine(" |_|   |||  | o o|");
+            Console.WriteLine("        ||| ( c  )                  ____");
+            Console.WriteLine("         ||| | =/                  ||   |_ ");
+            Console.WriteLine("          ||||||                   ||     |");
+            Console.WriteLine("          ||||||                ...||__/|- ");
+            Console.WriteLine("          ||||||             __|________|__");
+            Console.WriteLine("            |||             |______________|");
+            Console.WriteLine("            |||             || ||      || ||");
+            Console.WriteLine("            |||             || ||      || ||");
+            Console.WriteLine("  ----------|||-------------||-||------||-||-------");
+            Console.WriteLine("            |__>            || ||      || ||");
+        }
+
+        private static void PrintWonScreen()
+        {
+            Console.WriteLine("  _______________");
+            Console.WriteLine(" |@@@@|     |####|");
+            Console.WriteLine(" |@@@@|     |####|");
+            Console.WriteLine(" |@@@@|     |####|");
+            Console.WriteLine("  @@@@|     |#### ");
+            Console.WriteLine("   @@@|     |### ");
+            Console.WriteLine("   `@@|_____|##'");
+            Console.WriteLine("        (O)");
+            Console.WriteLine("     .-'''''-.");
+            Console.WriteLine("   .'  * * *  `.");
+            Console.WriteLine("  :  *       *  :");
+            Console.WriteLine(" : ~   Y O U   ~ :");
+            Console.WriteLine(" : ~   W O N   ~ :");
+            Console.WriteLine("  :  *       *  :");
+            Console.WriteLine("   `.  * * *  .'");
+            Console.WriteLine("     `-.....-'");
         }
         public static void Sort(List<Scores> score, int n)
         {
